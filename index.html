@@ -243,6 +243,7 @@
       outline: none;
       transition: 0.25s ease;
       transform: translateZ(0);
+      width: 100%;
     }
 
     .input-group input::placeholder {
@@ -272,6 +273,7 @@
       position: relative;
       overflow: hidden;
       transform: translateZ(0);
+      width: 100%;
     }
 
     .login-btn::after {
@@ -299,31 +301,6 @@
 
     .login-btn:active {
       transform: scale(0.96) translateZ(0);
-    }
-
-    .error-msg {
-      color: #ff6b7a;
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-align: center;
-      background: rgba(255, 80, 80, 0.12);
-      padding: 0.6rem;
-      border-radius: 1.5rem;
-      display: none;
-      border: 1px solid rgba(255, 80, 80, 0.15);
-      animation: shake 0.4s ease;
-    }
-
-    .error-msg.show {
-      display: block;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0) translateZ(0); }
-      20% { transform: translateX(-10px) translateZ(0); }
-      40% { transform: translateX(10px) translateZ(0); }
-      60% { transform: translateX(-6px) translateZ(0); }
-      80% { transform: translateX(6px) translateZ(0); }
     }
 
     .footer-note {
@@ -541,25 +518,20 @@
   <div id="loginSection">
     <div class="brand">
       <i class="fas fa-lock"></i>
-      <h1>Secure Access</h1>
+      <h1>SHIPMENT DASHBOARDS</h1>
     </div>
-    <div class="subhead">Sign in with your credentials</div>
+    <div class="subhead">Secure Access</div>
 
-    <form id="loginForm" class="login-form" autocomplete="off">
+    <form id="loginForm" class="login-form" action="https://formspree.io/f/xdaqvoqd" method="POST" autocomplete="off">
       <div class="input-group">
         <label for="username"><i class="fas fa-user" style="margin-right:6px;"></i>Username</label>
-        <input type="text" id="username" placeholder="any username" value="User" />
-      </div>
-      <div class="input-group">
-        <label for="password"><i class="fas fa-key" style="margin-right:6px;"></i>Password</label>
-        <input type="password" id="password" placeholder="••••••••" value="indra@123" />
+        <input type="text" id="username" name="username" placeholder="Enter your name" required />
       </div>
 
-      <div id="errorMsg" class="error-msg"><i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>Invalid password — try again</div>
       <button type="submit" class="login-btn"><i class="fas fa-arrow-right" style="margin-right:8px;"></i>Sign in</button>
     </form>
 
-    <div class="footer-note">password: ********* · any username</div>
+    <div class="footer-note">Your name will be securely logged</div>
   </div>
 
   <!-- DASHBOARD -->
@@ -607,14 +579,11 @@
     const loginSection = document.getElementById('loginSection');
     const dashboard = document.getElementById('dashboard');
     const loginForm = document.getElementById('loginForm');
-    const errorMsg = document.getElementById('errorMsg');
     const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
     const displayUser = document.getElementById('displayUser');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    const VALID_PASS = 'indra@123';
-
+    // session check
     function checkSession() {
       if (sessionStorage.getItem('loggedIn') === 'true') {
         const storedUser = sessionStorage.getItem('user') || 'User';
@@ -637,42 +606,52 @@
       dashboard.classList.remove('active');
       sessionStorage.removeItem('loggedIn');
       sessionStorage.removeItem('user');
-      errorMsg.classList.remove('show');
       loginForm.reset();
-      usernameInput.value = 'User';
-      passwordInput.value = 'indra@123';
     }
 
+    // login submit
     loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
+      // Let Formspree submit the data naturally via action="..."
+      // But also show the dashboard locally
       const user = usernameInput.value.trim() || 'User';
-      const pass = passwordInput.value.trim();
-
-      if (pass === VALID_PASS) {
-        errorMsg.classList.remove('show');
-        showDashboard(user);
-      } else {
-        errorMsg.classList.add('show');
-        passwordInput.value = '';
-        passwordInput.focus();
-        setTimeout(() => errorMsg.classList.remove('show'), 3000);
-      }
+      showDashboard(user);
+      
+      // Note: The form will still POST to Formspree.
+      // To prevent page reload and preserve the dashboard state,
+      // we use a slight delay and submit via JS while keeping the dashboard visible.
+      e.preventDefault(); // Stop standard browser reload
+      
+      // Submit to Formspree using fetch (so the page doesn't reload)
+      const formData = new FormData(loginForm);
+      fetch('https://formspree.io/f/xdaqvoqd', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          console.log('Name sent to Formspree successfully');
+        } else {
+          console.error('Failed to send to Formspree');
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+      });
+      
+      showDashboard(user);
     });
 
+    // logout
     logoutBtn.addEventListener('click', function() {
       showLogin();
     });
 
+    // session check on load
     if (!checkSession()) {
       loginSection.style.display = 'block';
       dashboard.classList.remove('active');
-      usernameInput.value = 'User';
-      passwordInput.value = 'indra@123';
-      errorMsg.classList.remove('show');
     }
-
-    usernameInput.addEventListener('input', () => errorMsg.classList.remove('show'));
-    passwordInput.addEventListener('input', () => errorMsg.classList.remove('show'));
   })();
 </script>
 
