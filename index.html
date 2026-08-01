@@ -1,659 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indra · Secure Gateway</title>
-  <!-- Inter font + Font Awesome icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    /* ----- RESET & BASE ----- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Indra · Shipment Dashboards</title>
+    <!-- Inter font + Font Awesome icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ----- RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      background: #0b1120;
-      overflow: hidden;
-      position: relative;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #0b1120;
+            overflow: hidden;
+            position: relative;
+        }
 
-    /* ----- VISIBLE OCEAN BACKGROUND ----- */
-    .ocean-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      background: linear-gradient(180deg, #0a192f 0%, #1b3b5c 60%, #0f2742 100%);
-      overflow: hidden;
-    }
+        /* ----- VISIBLE OCEAN BACKGROUND ----- */
+        .ocean-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(180deg, #0a192f 0%, #1b3b5c 60%, #0f2742 100%);
+            overflow: hidden;
+        }
 
-    /* LAYER CONTAINERS */
-    .wave-layer {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40%;
-      pointer-events: none;
-      will-change: transform;
-      transform: translateZ(0);
-      overflow: hidden;
-    }
+        .wave-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
+            overflow: hidden;
+        }
 
-    /* The actual moving SVG wrapper */
-    .wave-move {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 200%;
-      height: 100%;
-      will-change: transform;
-    }
+        .wave-move {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            will-change: transform;
+        }
 
-    .wave-move svg {
-      display: block;
-      width: 50%; /* Half of 200% so it tiles */
-      height: 100%;
-      float: left;
-    }
+        .wave-move svg {
+            display: block;
+            width: 50%;
+            height: 100%;
+            float: left;
+        }
 
-    /* Wave 1 - Deep (Slow) */
-    .wave-deep {
-      height: 50%;
-      z-index: 1;
-    }
-    .wave-deep .wave-move {
-      animation: waveSlide 15s linear infinite;
-    }
-    .wave-deep svg path {
-      fill: rgba(10, 30, 60, 0.6);
-    }
+        .wave-deep {
+            height: 50%;
+            z-index: 1;
+        }
+        .wave-deep .wave-move {
+            animation: waveSlide 15s linear infinite;
+        }
+        .wave-deep svg path {
+            fill: rgba(10, 30, 60, 0.6);
+        }
 
-    /* Wave 2 - Mid (Medium speed) */
-    .wave-mid {
-      height: 45%;
-      z-index: 2;
-      bottom: -10px;
-    }
-    .wave-mid .wave-move {
-      animation: waveSlide 10s linear infinite reverse;
-    }
-    .wave-mid svg path {
-      fill: rgba(30, 80, 150, 0.5);
-    }
+        .wave-mid {
+            height: 45%;
+            z-index: 2;
+            bottom: -10px;
+        }
+        .wave-mid .wave-move {
+            animation: waveSlide 10s linear infinite reverse;
+        }
+        .wave-mid svg path {
+            fill: rgba(30, 80, 150, 0.5);
+        }
 
-    /* Wave 3 - Surface (Fast) */
-    .wave-surface {
-      height: 35%;
-      z-index: 3;
-      bottom: -20px;
-    }
-    .wave-surface .wave-move {
-      animation: waveSlide 6s linear infinite;
-    }
-    .wave-surface svg path {
-      fill: rgba(60, 160, 230, 0.4);
-    }
+        .wave-surface {
+            height: 35%;
+            z-index: 3;
+            bottom: -20px;
+        }
+        .wave-surface .wave-move {
+            animation: waveSlide 6s linear infinite;
+        }
+        .wave-surface svg path {
+            fill: rgba(60, 160, 230, 0.4);
+        }
 
-    /* Wave 4 - Sparkle (Fastest) */
-    .wave-sparkle {
-      height: 25%;
-      z-index: 4;
-      bottom: -30px;
-    }
-    .wave-sparkle .wave-move {
-      animation: waveSlide 4s linear infinite reverse;
-    }
-    .wave-sparkle svg path {
-      fill: rgba(255, 255, 255, 0.15);
-    }
+        .wave-sparkle {
+            height: 25%;
+            z-index: 4;
+            bottom: -30px;
+        }
+        .wave-sparkle .wave-move {
+            animation: waveSlide 4s linear infinite reverse;
+        }
+        .wave-sparkle svg path {
+            fill: rgba(255, 255, 255, 0.15);
+        }
 
-    @keyframes waveSlide {
-      0% { transform: translateX(0) translateZ(0); }
-      100% { transform: translateX(-50%) translateZ(0); }
-    }
+        @keyframes waveSlide {
+            0% {
+                transform: translateX(0) translateZ(0);
+            }
+            100% {
+                transform: translateX(-50%) translateZ(0);
+            }
+        }
 
-    /* Sunlight glints */
-    .glint {
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 1;
-      will-change: transform, opacity;
-      transform: translateZ(0);
-      animation: floatGlint 15s infinite alternate ease-in-out;
-    }
-    .glint-1 { 
-      width: 600px; height: 600px; 
-      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-      top: 30%; left: -10%; 
-    }
-    .glint-2 { 
-      width: 400px; height: 400px; 
-      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
-      top: 60%; right: -5%; 
-      animation-delay: 4s; 
-    }
+        .glint {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            animation: floatGlint 15s infinite alternate ease-in-out;
+        }
+        .glint-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            top: 30%;
+            left: -10%;
+        }
+        .glint-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+            top: 60%;
+            right: -5%;
+            animation-delay: 4s;
+        }
 
-    @keyframes floatGlint {
-      0% { transform: translate(0, 0) scale(1) translateZ(0); opacity: 0.2; }
-      100% { transform: translate(40px, -30px) scale(1.2) translateZ(0); opacity: 0.5; }
-    }
+        @keyframes floatGlint {
+            0% {
+                transform: translate(0, 0) scale(1) translateZ(0);
+                opacity: 0.2;
+            }
+            100% {
+                transform: translate(40px, -30px) scale(1.2) translateZ(0);
+                opacity: 0.5;
+            }
+        }
 
-    /* ----- MAIN CARD ----- */
-    .card {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 3rem;
-      padding: 2.8rem 2.2rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      transform: translateZ(0);
-    }
+        /* ----- MAIN CARD ----- */
+        .card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 3rem;
+            padding: 2.8rem 2.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateZ(0);
+        }
 
-    .card:hover {
-      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
+        .card:hover {
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
 
-    /* ----- LOGIN SECTION ----- */
-    #loginSection {
-      animation: fadeSlideIn 0.7s ease;
-    }
+        /* ----- DASHBOARD ----- */
+        .dashboard {
+            animation: fadeSlideIn 0.6s ease;
+        }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 0.2rem;
-    }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.2rem;
+        }
 
-    .brand i {
-      font-size: 2.2rem;
-      color: #7aa9ff;
-      filter: drop-shadow(0 0 8px rgba(74, 144, 255, 0.3));
-    }
+        .brand i {
+            font-size: 2.2rem;
+            color: #7aa9ff;
+            filter: drop-shadow(0 0 8px rgba(74, 144, 255, 0.3));
+        }
 
-    h1 {
-      font-weight: 700;
-      font-size: 2rem;
-      color: #fff;
-      letter-spacing: -0.02em;
-    }
+        /* --- HEADING SIZE REDUCED --- */
+        h1 {
+            font-weight: 700;
+            font-size: 1.1rem;   /* was 2rem */
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
 
-    .subhead {
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 0.95rem;
-      font-weight: 400;
-      margin-bottom: 2rem;
-      padding-left: 0.2rem;
-      border-left: 3px solid #4f7dff;
-      padding-left: 0.8rem;
-    }
+        .subhead {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            padding-left: 0.2rem;
+            border-left: 3px solid #4f7dff;
+            padding-left: 0.8rem;
+        }
 
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.3rem;
-    }
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.08), transparent);
+            margin: 1.2rem 0 1.8rem 0;
+        }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
+        .link-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
 
-    .input-group label {
-      font-weight: 500;
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-left: 0.3rem;
-    }
+        .link-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.25s ease;
+            cursor: pointer;
+            transform: translateZ(0);
+        }
 
-    .input-group input {
-      padding: 0.9rem 1.2rem;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 1.5rem;
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(4px);
-      font-size: 1rem;
-      font-family: inherit;
-      color: #fff;
-      outline: none;
-      transition: 0.25s ease;
-      transform: translateZ(0);
-      width: 100%;
-    }
+        .link-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(79, 125, 255, 0.3);
+            transform: translateX(6px) scale(1.01) translateZ(0);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
 
-    .input-group input::placeholder {
-      color: rgba(255, 255, 255, 0.2);
-      font-weight: 400;
-    }
+        .link-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
 
-    .input-group input:focus {
-      border-color: #4f7dff;
-      background: rgba(255, 255, 255, 0.07);
-      box-shadow: 0 0 0 4px rgba(79, 125, 255, 0.15);
-    }
+        .link-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: 0.2s;
+            transform: translateZ(0);
+        }
 
-    .login-btn {
-      background: linear-gradient(135deg, #4f7dff, #6c5ce7);
-      border: none;
-      padding: 1rem;
-      border-radius: 2rem;
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.25s ease;
-      margin-top: 0.2rem;
-      letter-spacing: 0.4px;
-      box-shadow: 0 8px 24px rgba(79, 125, 255, 0.25);
-      position: relative;
-      overflow: hidden;
-      transform: translateZ(0);
-      width: 100%;
-    }
+        .link-card:hover .link-icon {
+            transform: scale(1.05) translateZ(0);
+        }
 
-    .login-btn::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      opacity: 0;
-      transition: 0.4s;
-      transform: scale(0.5);
-    }
+        .link-card:nth-child(1) .link-icon {
+            background: rgba(255, 0, 0, 0.75);
+            color: #FFFFFF;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.25);
+        }
 
-    .login-btn:hover {
-      transform: translateY(-2px) scale(1.01) translateZ(0);
-      box-shadow: 0 12px 32px rgba(79, 125, 255, 0.4);
-    }
+        .link-card:nth-child(2) .link-icon {
+            background: rgba(255, 255, 255, 0.85);
+            color: #FF0000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
 
-    .login-btn:hover::after {
-      opacity: 1;
-      transform: scale(1);
-    }
+        .link-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
 
-    .login-btn:active {
-      transform: scale(0.96) translateZ(0);
-    }
+        .link-sub {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 0.05rem;
+        }
 
-    .footer-note {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.2);
-      text-align: center;
-      margin-top: 1.5rem;
-      letter-spacing: 0.5px;
-    }
+        .link-arrow {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 1.4rem;
+            transition: 0.25s;
+        }
 
-    /* ----- DASHBOARD ----- */
-    .dashboard {
-      display: none;
-      animation: fadeSlideIn 0.6s ease;
-    }
+        .link-card:hover .link-arrow {
+            color: #7aa9ff;
+            transform: translateX(6px) translateZ(0);
+        }
 
-    .dashboard.active {
-      display: block;
-    }
+        @keyframes fadeSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(25px) translateZ(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) translateZ(0);
+            }
+        }
 
-    .greeting {
-      font-weight: 500;
-      color: #fff;
-      font-size: 1.2rem;
-      margin-bottom: 0.1rem;
-    }
-
-    .greeting span {
-      font-weight: 700;
-      background: linear-gradient(135deg, #7aa9ff, #b35dff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .greeting-sub {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.85rem;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, rgba(255, 255, 255, 0.08), transparent);
-      margin: 1.2rem 0 1.8rem 0;
-    }
-
-    .link-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .link-card {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(4px);
-      padding: 1.2rem 1.5rem;
-      border-radius: 1.8rem;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-decoration: none;
-      color: #fff;
-      transition: 0.25s ease;
-      cursor: pointer;
-      transform: translateZ(0);
-    }
-
-    .link-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(79, 125, 255, 0.3);
-      transform: translateX(6px) scale(1.01) translateZ(0);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    }
-
-    .link-left {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-
-    .link-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      transition: 0.2s;
-      transform: translateZ(0);
-    }
-
-    .link-card:hover .link-icon {
-      transform: scale(1.05) translateZ(0);
-    }
-
-    /* ========== CUSTOM BUTTON COLORS ========== */
-    .link-card:nth-child(1) .link-icon {
-      background: rgba(255, 0, 0, 0.75);
-      color: #FFFFFF;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.25);
-    }
-
-    .link-card:nth-child(2) .link-icon {
-      background: rgba(255, 255, 255, 0.85);
-      color: #FF0000;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    }
-
-    .link-label {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-
-    .link-sub {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.35);
-      margin-top: 0.05rem;
-    }
-
-    .link-arrow {
-      color: rgba(255, 255, 255, 0.2);
-      font-size: 1.4rem;
-      transition: 0.25s;
-    }
-
-    .link-card:hover .link-arrow {
-      color: #7aa9ff;
-      transform: translateX(6px) translateZ(0);
-    }
-
-    .logout-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.7rem 1.8rem;
-      border-radius: 2rem;
-      font-weight: 500;
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: 0.2s;
-      margin-top: 2rem;
-      font-family: inherit;
-      backdrop-filter: blur(4px);
-      transform: translateZ(0);
-    }
-
-    .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    @keyframes fadeSlideIn {
-      0% { opacity: 0; transform: translateY(25px) translateZ(0); }
-      100% { opacity: 1; transform: translateY(0) translateZ(0); }
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 2rem 1.5rem;
-        border-radius: 2rem;
-      }
-      h1 { font-size: 1.7rem; }
-      .brand i { font-size: 1.8rem; }
-    }
-  </style>
+        @media (max-width: 480px) {
+            .card {
+                padding: 2rem 1.5rem;
+                border-radius: 2rem;
+            }
+            h1 {
+                font-size: 1.4rem; /* slightly smaller on mobile */
+            }
+            .brand i {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- VISIBLE OCEAN WAVES -->
-<div class="ocean-bg">
-  <div class="glint glint-1"></div>
-  <div class="glint glint-2"></div>
+    <!-- VISIBLE OCEAN WAVES -->
+    <div class="ocean-bg">
+        <div class="glint glint-1"></div>
+        <div class="glint glint-2"></div>
 
-  <!-- Wave 1 - Deep -->
-  <div class="wave-layer wave-deep">
-    <div class="wave-move">
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,50 L1200,200 L0,200 Z"/></svg>
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,50 L1200,200 L0,200 Z"/></svg>
-    </div>
-  </div>
+        <!-- Wave 1 - Deep -->
+        <div class="wave-layer wave-deep">
+            <div class="wave-move">
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,50 L1200,200 L0,200 Z"/></svg>
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,50 L1200,200 L0,200 Z"/></svg>
+            </div>
+        </div>
 
-  <!-- Wave 2 - Mid -->
-  <div class="wave-layer wave-mid">
-    <div class="wave-move">
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
-    </div>
-  </div>
+        <!-- Wave 2 - Mid -->
+        <div class="wave-layer wave-mid">
+            <div class="wave-move">
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
+            </div>
+        </div>
 
-  <!-- Wave 3 - Surface -->
-  <div class="wave-layer wave-surface">
-    <div class="wave-move">
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
-    </div>
-  </div>
+        <!-- Wave 3 - Surface -->
+        <div class="wave-layer wave-surface">
+            <div class="wave-move">
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
+            </div>
+        </div>
 
-  <!-- Wave 4 - Sparkle -->
-  <div class="wave-layer wave-sparkle">
-    <div class="wave-move">
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
-      <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
+        <!-- Wave 4 - Sparkle -->
+        <div class="wave-layer wave-sparkle">
+            <div class="wave-move">
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
+                <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- MAIN CARD -->
+    <div class="card" role="main">
+
+        <!-- DASHBOARD -->
+        <div class="dashboard">
+            <div class="brand">
+                <i class="fas fa-ship"></i>
+                <h1>SHIPMENT DASHBOARDS</h1>
+            </div>
+            <div class="subhead">Secure Gateway 🔒</div>
+
+            <div class="divider"></div>
+
+            <div class="link-grid">
+                <!-- TRADERS Shipments -->
+                <a href="https://docs.google.com/spreadsheets/d/1XVjQzlRxuZlXp0xXWzqg0cQnSKufM73FsxUsqybdIi0/edit?usp=sharing"
+                target="_blank" rel="noopener noreferrer" class="link-card">
+                <div class="link-left">
+                    <div class="link-icon"><i class="fas fa-ship"></i></div>
+                    <div>
+                        <div class="link-label">Indra Traders Shipments</div>
+                        <div class="link-sub">Foton new</div>
+                    </div>
+                </div>
+                <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <!-- IMS Shipments -->
+            <a href="https://docs.google.com/spreadsheets/d/1PcJH2JXyxoRbuTJ-vRtLPj0DyTb3o7rINuwtqNvNib0/edit?usp=sharing"
+            target="_blank" rel="noopener noreferrer" class="link-card">
+            <div class="link-left">
+                <div class="link-icon"><i class="fas fa-ship"></i></div>
+                <div>
+                    <div class="link-label">Indra Motor Spares Shipments</div>
+                    <div class="link-sub">Foton, JP</div>
+                </div>
+            </div>
+            <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+    </div>
 </div>
 
-
-<!-- main card -->
-<div class="card" role="main">
-
-  <!-- LOGIN SECTION -->
-  <div id="loginSection">
-    <div class="brand">
-      <i class="fas fa-lock"></i>
-      <h1>SHIPMENT DASHBOARDS</h1>
-    </div>
-    <div class="subhead">Secure Access</div>
-
-    <form id="loginForm" class="login-form" action="https://formspree.io/f/xdaqvoqd" method="POST" autocomplete="off">
-      <div class="input-group">
-        <label for="username"><i class="fas fa-user" style="margin-right:6px;"></i>Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your name" required />
-      </div>
-
-      <button type="submit" class="login-btn"><i class="fas fa-arrow-right" style="margin-right:8px;"></i>Sign in</button>
-    </form>
-
-    <div class="footer-note">Your name will be securely logged</div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="dashboard">
-    <div class="greeting">👋 Welcome, <span id="displayUser">User</span></div>
-    <div class="greeting-sub">Your shipment dashboards are ready</div>
-
-    <div class="divider"></div>
-
-    <div class="link-grid">
-      <!-- TRADERS Shipments -->
-      <a href="https://docs.google.com/spreadsheets/d/1XVjQzlRxuZlXp0xXWzqg0cQnSKufM73FsxUsqybdIi0/edit?usp=sharing"
-         target="_blank" rel="noopener noreferrer" class="link-card">
-        <div class="link-left">
-          <div class="link-icon"><i class="fas fa-ship"></i></div>
-          <div>
-            <div class="link-label">Indra Traders Shipments</div>
-            <div class="link-sub">Foton new</div>
-          </div>
-        </div>
-        <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
-      </a>
-
-      <!-- IMS Shipments -->
-      <a href="https://docs.google.com/spreadsheets/d/1PcJH2JXyxoRbuTJ-vRtLPj0DyTb3o7rINuwtqNvNib0/edit?usp=sharing"
-         target="_blank" rel="noopener noreferrer" class="link-card">
-        <div class="link-left">
-          <div class="link-icon"><i class="fas fa-ship"></i></div>
-          <div>
-            <div class="link-label">Indra Motor Spares Shipments</div>
-            <div class="link-sub">Foton, JP</div>
-          </div>
-        </div>
-        <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
-      </a>
-    </div>
-
-    <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>Sign out</button>
-  </div>
-
 </div>
-
-<script>
-  (function() {
-    const loginSection = document.getElementById('loginSection');
-    const dashboard = document.getElementById('dashboard');
-    const loginForm = document.getElementById('loginForm');
-    const usernameInput = document.getElementById('username');
-    const displayUser = document.getElementById('displayUser');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    // session check
-    function checkSession() {
-      if (sessionStorage.getItem('loggedIn') === 'true') {
-        const storedUser = sessionStorage.getItem('user') || 'User';
-        showDashboard(storedUser);
-        return true;
-      }
-      return false;
-    }
-
-    function showDashboard(username) {
-      loginSection.style.display = 'none';
-      dashboard.classList.add('active');
-      displayUser.textContent = username.trim() || 'User';
-      sessionStorage.setItem('loggedIn', 'true');
-      sessionStorage.setItem('user', username.trim() || 'User');
-    }
-
-    function showLogin() {
-      loginSection.style.display = 'block';
-      dashboard.classList.remove('active');
-      sessionStorage.removeItem('loggedIn');
-      sessionStorage.removeItem('user');
-      loginForm.reset();
-    }
-
-    // login submit
-    loginForm.addEventListener('submit', function(e) {
-      // Let Formspree submit the data naturally via action="..."
-      // But also show the dashboard locally
-      const user = usernameInput.value.trim() || 'User';
-      showDashboard(user);
-      
-      // Note: The form will still POST to Formspree.
-      // To prevent page reload and preserve the dashboard state,
-      // we use a slight delay and submit via JS while keeping the dashboard visible.
-      e.preventDefault(); // Stop standard browser reload
-      
-      // Submit to Formspree using fetch (so the page doesn't reload)
-      const formData = new FormData(loginForm);
-      fetch('https://formspree.io/f/xdaqvoqd', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.ok) {
-          console.log('Name sent to Formspree successfully');
-        } else {
-          console.error('Failed to send to Formspree');
-        }
-      }).catch(error => {
-        console.error('Error:', error);
-      });
-      
-      showDashboard(user);
-    });
-
-    // logout
-    logoutBtn.addEventListener('click', function() {
-      showLogin();
-    });
-
-    // session check on load
-    if (!checkSession()) {
-      loginSection.style.display = 'block';
-      dashboard.classList.remove('active');
-    }
-  })();
-</script>
 
 </body>
 </html>
