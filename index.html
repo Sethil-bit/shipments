@@ -49,10 +49,9 @@
             position: absolute;
             inset: -25%;
             pointer-events: none;
-            filter: blur(65px);
-            opacity: .55;
-            mix-blend-mode: screen;
-            animation: rgbDrift 18s ease-in-out infinite alternate;
+            filter: blur(32px);
+            opacity: .38;
+            animation: rgbDrift 30s ease-in-out infinite alternate;
         }
 
         .ocean-bg::before {
@@ -63,7 +62,7 @@
         }
 
         .ocean-bg::after {
-            animation-duration: 25s;
+            animation-duration: 38s;
             animation-direction: alternate-reverse;
             background:
                 radial-gradient(circle at 80% 70%, rgba(170, 0, 255, .25), transparent 20%),
@@ -103,7 +102,7 @@
                 );
             transform: perspective(600px) rotateX(58deg) scale(1.35);
             transform-origin: bottom;
-            animation: waterTexture 9s linear infinite;
+            animation: waterTexture 18s linear infinite;
         }
 
         /* Advanced SVG wave layers */
@@ -113,16 +112,14 @@
             width: 110%;
             pointer-events: none;
             overflow: visible;
-            will-change: transform;
-        }
+                    }
 
         .wave-move {
             position: absolute;
             left: -10%;
             width: 120%;
             height: 100%;
-            will-change: transform;
-        }
+                    }
 
         .wave-move svg {
             display: block;
@@ -139,12 +136,12 @@
         }
 
         .wave-deep .wave-move {
-            animation: realisticWave 17s ease-in-out infinite alternate;
+            animation: realisticWave 24s ease-in-out infinite alternate;
         }
 
         .wave-deep svg path {
             fill: url(#deepGradient);
-            filter: drop-shadow(0 -12px 25px rgba(0, 90, 255, .16));
+            filter: drop-shadow(0 -6px 12px rgba(0, 90, 255, .12));
         }
 
         .wave-mid {
@@ -155,12 +152,12 @@
         }
 
         .wave-mid .wave-move {
-            animation: realisticWave 12s ease-in-out infinite alternate-reverse;
+            animation: realisticWave 18s ease-in-out infinite alternate-reverse;
         }
 
         .wave-mid svg path {
             fill: url(#midGradient);
-            filter: drop-shadow(0 -10px 22px rgba(0, 220, 255, .22));
+            filter: drop-shadow(0 -5px 11px rgba(0, 220, 255, .14));
         }
 
         .wave-surface {
@@ -170,12 +167,12 @@
         }
 
         .wave-surface .wave-move {
-            animation: realisticWave 8s ease-in-out infinite alternate;
+            animation: realisticWave 13s ease-in-out infinite alternate;
         }
 
         .wave-surface svg path {
             fill: url(#surfaceGradient);
-            filter: drop-shadow(0 -7px 18px rgba(0, 255, 230, .25));
+            filter: drop-shadow(0 -4px 9px rgba(0, 255, 230, .16));
         }
 
         .wave-sparkle {
@@ -186,12 +183,12 @@
         }
 
         .wave-sparkle .wave-move {
-            animation: realisticWave 5s ease-in-out infinite alternate-reverse;
+            animation: realisticWave 9s ease-in-out infinite alternate-reverse;
         }
 
         .wave-sparkle svg path {
             fill: url(#sparkleGradient);
-            filter: drop-shadow(0 0 12px rgba(255,255,255,.22));
+            filter: drop-shadow(0 0 6px rgba(255,255,255,.14));
         }
 
         /* Tiny reflective light streaks */
@@ -202,9 +199,9 @@
             height: 2px;
             border-radius: 50%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), rgba(0,255,255,.65), transparent);
-            filter: blur(.6px);
+            filter: blur(.3px);
             opacity: .45;
-            animation: reflectionMove 6s ease-in-out infinite;
+            animation: reflectionMove 10s ease-in-out infinite;
         }
 
         .reflection.r1 { left: 14%; bottom: 18%; animation-delay: -1s; }
@@ -216,8 +213,7 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 6;
-            will-change: transform, opacity;
-            filter: blur(2px);
+                        filter: blur(1px);
             animation: floatGlint 14s infinite alternate ease-in-out;
         }
 
@@ -274,15 +270,15 @@
             background:
                 linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
                 rgba(2, 10, 28, .42);
-            backdrop-filter: blur(24px) saturate(145%);
-            -webkit-backdrop-filter: blur(24px) saturate(145%);
+            backdrop-filter: blur(14px) saturate(125%);
+            -webkit-backdrop-filter: blur(14px) saturate(125%);
             border-radius: 2.5rem;
             padding: 2.8rem 2.2rem;
             border: 1px solid rgba(255,255,255,.13);
             box-shadow:
-                0 40px 100px rgba(0,0,0,.62),
-                inset 0 1px 0 rgba(255,255,255,.13),
-                0 0 70px rgba(0,190,255,.08);
+                0 28px 60px rgba(0,0,0,.52),
+                inset 0 1px 0 rgba(255,255,255,.11),
+                0 0 35px rgba(0,190,255,.055);
             transition: transform .35s ease, box-shadow .35s ease;
             transform: translateZ(0);
             overflow: hidden;
@@ -300,7 +296,7 @@
             mask-composite: exclude;
             opacity: .65;
             pointer-events: none;
-            animation: borderRGB 8s linear infinite;
+            animation: borderRGB 16s linear infinite;
         }
 
         @keyframes borderRGB {
@@ -371,8 +367,8 @@
             position: relative;
             overflow: hidden;
             background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
-            backdrop-filter: blur(12px) saturate(135%);
-            -webkit-backdrop-filter: blur(12px) saturate(135%);
+            backdrop-filter: blur(8px) saturate(115%);
+            -webkit-backdrop-filter: blur(8px) saturate(115%);
             padding: 1.2rem 1.5rem;
             border-radius: 1.55rem;
             border: 1px solid rgba(255,255,255,.095);
@@ -493,6 +489,51 @@
                 scroll-behavior: auto !important;
             }
         }
+    
+        /* ----- PERFORMANCE OPTIMIZATION ----- */
+        body.page-hidden .wave-move,
+        body.page-hidden .ocean-bg::before,
+        body.page-hidden .ocean-bg::after,
+        body.page-hidden .water-texture,
+        body.page-hidden .reflection,
+        body.page-hidden .glint {
+            animation-play-state: paused !important;
+        }
+
+        /* Keep expensive background layers simple on smaller screens. */
+        @media (max-width: 700px) {
+            .ocean-bg::before,
+            .ocean-bg::after {
+                filter: blur(22px);
+                opacity: .28;
+            }
+
+            .water-texture {
+                opacity: .10;
+            }
+
+            .reflection {
+                opacity: .25;
+            }
+
+            .card {
+                backdrop-filter: blur(10px) saturate(115%);
+                -webkit-backdrop-filter: blur(10px) saturate(115%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ocean-bg::before,
+            .ocean-bg::after,
+            .wave-move,
+            .water-texture,
+            .reflection,
+            .glint,
+            .card::before {
+                animation: none !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -608,6 +649,17 @@
 </div>
 
 </div>
+
+
+<script>
+(() => {
+    const updateVisibility = () => {
+        document.body.classList.toggle('page-hidden', document.hidden);
+    };
+    document.addEventListener('visibilitychange', updateVisibility, {passive: true});
+    updateVisibility();
+})();
+</script>
 
 </body>
 </html>
