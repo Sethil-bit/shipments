@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Indra · Shipment Dashboards</title>
+    <title>Indra · Ongoing Shipments</title>
     <!-- Inter font + Font Awesome icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1023,7 +1023,7 @@
             <div class="login-box">
                 <div class="login-brand">
                     <i class="fas fa-ship"></i>
-                    <div class="login-title">SHIPMENT DASHBOARDS</div>
+                    <div class="login-title">Ongoing Shipments</div>
                 </div>
                 <div class="login-subtitle">Password Protected Gateway 🔒</div>
 
@@ -1115,7 +1115,7 @@
         <div class="dashboard" id="dashboard">
             <div class="brand">
                 <i class="fas fa-ship"></i>
-                <h1>SHIPMENT DASHBOARDS</h1>
+                <h1>Ongoing Shipments</h1>
             </div>
             <div class="subhead">Secure Gateway 🔒</div>
 
@@ -1198,8 +1198,8 @@
                 },
                 body: JSON.stringify({
                     username: username,
-                    _subject: "Shipment Dashboards – login",
-                    page: "Shipment Dashboards",
+                    _subject: "Ongoing Shipments – login",
+                    page: "Ongoing Shipments",
                     time: new Date().toISOString()
                 })
             }).catch(() => { /* silent — never block login */ });
