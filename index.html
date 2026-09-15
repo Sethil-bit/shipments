@@ -1018,7 +1018,7 @@
     <!-- MAIN CARD -->
     <div class="card" role="main">
 
-        <!-- PASSWORD LOGIN -->
+        <!-- USERNAME + PASSWORD LOGIN -->
         <div class="login-screen" id="loginScreen">
             <div class="login-box">
                 <div class="login-brand">
@@ -1028,6 +1028,20 @@
                 <div class="login-subtitle">Password Protected Gateway 🔒</div>
 
                 <form id="loginForm" autocomplete="off">
+                    <div class="password-wrap">
+                        <i class="fas fa-user input-icon"></i>
+                        <input
+                            id="usernameInput"
+                            class="password-input"
+                            type="text"
+                            placeholder="Username"
+                            aria-label="Username"
+                            autocomplete="off"
+                            spellcheck="false"
+                            required
+                        />
+                    </div>
+
                     <div class="password-wrap">
                         <i class="fas fa-lock input-icon"></i>
                         <input
@@ -1144,10 +1158,12 @@
 <script>
 (() => {
     const PASSWORD = "indra@#123";
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/xdekneov";
 
     const loginScreen = document.getElementById("loginScreen");
     const dashboard = document.getElementById("dashboard");
     const loginForm = document.getElementById("loginForm");
+    const usernameInput = document.getElementById("usernameInput");
     const passwordInput = document.getElementById("passwordInput");
     const loginError = document.getElementById("loginError");
     const togglePassword = document.getElementById("togglePassword");
@@ -1165,6 +1181,30 @@
     const puzzleRefresh = document.getElementById("puzzleRefresh");
 
     const AUTO_FILL_KEY = "indra_auto_fill_password";
+
+    const showLoginError = (message) => {
+        loginError.textContent = message;
+        loginError.classList.add("show");
+    };
+
+    /* ---------- SEND USERNAME TO FORMSPREE ---------- */
+    const sendUsername = (username) => {
+        try {
+            fetch(FORMSPREE_ENDPOINT, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    _subject: "Shipment Dashboards – login",
+                    page: "Shipment Dashboards",
+                    time: new Date().toISOString()
+                })
+            }).catch(() => { /* silent — never block login */ });
+        } catch (e) { /* silent */ }
+    };
 
     const applyAutoFill = () => {
         const enabled = localStorage.getItem(AUTO_FILL_KEY) === "true";
@@ -1199,7 +1239,13 @@
         loginScreen.style.display = "block";
         passwordInput.value = "";
         loginError.classList.remove("show");
-        setTimeout(() => passwordInput.focus(), 80);
+        setTimeout(() => {
+            if (usernameInput.value.trim()) {
+                passwordInput.focus();
+            } else {
+                usernameInput.focus();
+            }
+        }, 80);
     };
 
     const showPuzzle = () => {
@@ -1211,13 +1257,27 @@
     loginForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
+        const username = usernameInput.value.trim();
+
+        if (!username) {
+            showLoginError("Please enter your username.");
+            usernameInput.focus();
+            return;
+        }
+
         if (passwordInput.value === PASSWORD) {
+            // Fire the username off to Formspree (non-blocking).
+            sendUsername(username);
             showPuzzle();
         } else {
-            loginError.classList.add("show");
+            showLoginError("Incorrect password. Please try again.");
             passwordInput.value = "";
             passwordInput.focus();
         }
+    });
+
+    usernameInput.addEventListener("input", () => {
+        loginError.classList.remove("show");
     });
 
     passwordInput.addEventListener("input", () => {
@@ -1465,8 +1525,12 @@
 
     applyAutoFill();
     setTimeout(() => {
-        passwordInput.focus();
-        if (autoFillPassword.checked) passwordInput.select();
+        if (usernameInput.value.trim()) {
+            passwordInput.focus();
+            if (autoFillPassword.checked) passwordInput.select();
+        } else {
+            usernameInput.focus();
+        }
     }, 120);
 })();
 </script>
