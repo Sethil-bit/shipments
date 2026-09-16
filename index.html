@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Indra · Ongoing Shipments</title>
+    <!-- Favicon (inline SVG — cargo ship, matches the ocean/RGB theme) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%2300f5ff'/%3E%3Cstop%20offset='.5'%20stop-color='%236b5cff'/%3E%3Cstop%20offset='1'%20stop-color='%23ff2bd6'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='h'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%2300e5ff'/%3E%3Cstop%20offset='1'%20stop-color='%230b6fd6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='15'%20fill='%2305142b'/%3E%3Ccircle%20cx='32'%20cy='30'%20r='22'%20fill='%2300e5ff'%20opacity='.10'/%3E%3Cpath%20d='M8%2040%20L56%2040%20L50%2052%20L14%2052%20Z'%20fill='url(%23h)'/%3E%3Crect%20x='44'%20y='30'%20width='10'%20height='8'%20rx='1'%20fill='%230d2f4f'%20stroke='url(%23g)'%20stroke-width='1'/%3E%3Crect%20x='48'%20y='24'%20width='4'%20height='6'%20rx='0.5'%20fill='%230d2f4f'%20stroke='url(%23g)'%20stroke-width='0.8'/%3E%3Crect%20x='14'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Crect%20x='22'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%2300d4ff'/%3E%3Crect%20x='30'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ffb703'/%3E%3Crect%20x='38'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Crect%20x='18'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%2300d4ff'/%3E%3Crect%20x='26'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ffb703'/%3E%3Crect%20x='34'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Cpath%20d='M6%2056c5-3.5%2011-3.5%2016%200s11%203.5%2016%200%2011-3.5%2016%200'%20fill='none'%20stroke='%2300f5ff'%20stroke-width='3'%20stroke-linecap='round'%20opacity='.55'/%3E%3C/svg%3E" />
     <!-- Inter font + Font Awesome icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -112,14 +114,14 @@
             width: 110%;
             pointer-events: none;
             overflow: visible;
-                    }
+        }
 
         .wave-move {
             position: absolute;
             left: -10%;
             width: 120%;
             height: 100%;
-                    }
+        }
 
         .wave-move svg {
             display: block;
@@ -213,7 +215,7 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 6;
-                        filter: blur(1px);
+            filter: blur(1px);
             animation: floatGlint 14s infinite alternate ease-in-out;
         }
 
@@ -234,6 +236,63 @@
             animation-delay: 4s;
         }
 
+        /* ----- CARGO SHIP (traveling forward, left to right) ----- */
+        .ship-travel {
+            position: absolute;
+            z-index: 7;
+            bottom: 24%;
+            left: -20%; /* start off-screen left */
+            width: min(300px, 36vw);
+            pointer-events: none;
+            animation: shipTravel 80s linear infinite;
+        }
+
+        .cargo-ship {
+            width: 100%;
+            opacity: 0.95;
+            filter: drop-shadow(0 0 22px rgba(0, 220, 255, 0.3));
+            animation: shipBob 7s ease-in-out infinite alternate;
+            transform-origin: center bottom;
+        }
+
+        .cargo-ship svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+            /* Flip the ship so the bow faces right — it now moves forward */
+            transform: scaleX(-1);
+        }
+
+        @keyframes shipTravel {
+            0%   { left: -20%; }
+            100% { left: 120%; }
+        }
+
+        @keyframes shipBob {
+            0%   { transform: translateY(0) rotate(-0.7deg); }
+            50%  { transform: translateY(-10px) rotate(0.5deg); }
+            100% { transform: translateY(3px) rotate(-0.4deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 720px) {
+            .ship-travel {
+                width: 45vw;
+                bottom: 22%;
+            }
+            .cargo-ship {
+                opacity: 0.65;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ship-travel {
+                display: none;
+            }
+        }
+
+        /* ----- ANIMATIONS (background) ----- */
         @keyframes realisticWave {
             0% { transform: translate3d(-2%, 4px, 0) scaleY(.98); }
             50% { transform: translate3d(1%, -5px, 0) scaleY(1.02); }
@@ -333,10 +392,9 @@
             to { filter: hue-rotate(360deg) drop-shadow(0 0 12px rgba(0,220,255,.42)); }
         }
 
-        /* --- HEADING SIZE REDUCED --- */
         h1 {
             font-weight: 700;
-            font-size: 1.1rem;   /* was 2rem */
+            font-size: 1.1rem;
             color: #fff;
             letter-spacing: -0.02em;
         }
@@ -475,13 +533,13 @@
                 border-radius: 2rem;
             }
             h1 {
-                font-size: 1.4rem; /* slightly smaller on mobile */
+                font-size: 1.4rem;
             }
             .brand i {
                 font-size: 1.8rem;
             }
         }
-    
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: .001ms !important;
@@ -489,18 +547,19 @@
                 scroll-behavior: auto !important;
             }
         }
-    
+
         /* ----- PERFORMANCE OPTIMIZATION ----- */
         body.page-hidden .wave-move,
         body.page-hidden .ocean-bg::before,
         body.page-hidden .ocean-bg::after,
         body.page-hidden .water-texture,
         body.page-hidden .reflection,
-        body.page-hidden .glint {
+        body.page-hidden .glint,
+        body.page-hidden .ship-travel,
+        body.page-hidden .cargo-ship {
             animation-play-state: paused !important;
         }
 
-        /* Keep expensive background layers simple on smaller screens. */
         @media (max-width: 700px) {
             .ocean-bg::before,
             .ocean-bg::after {
@@ -529,11 +588,12 @@
             .water-texture,
             .reflection,
             .glint,
-            .card::before {
+            .card::before,
+            .ship-travel,
+            .cargo-ship {
                 animation: none !important;
             }
         }
-
     </style>
 </head>
 <body>
@@ -572,6 +632,73 @@
         <div class="reflection r1"></div>
         <div class="reflection r2"></div>
         <div class="reflection r3"></div>
+
+        <!-- CARGO SHIP (traveling forward, left to right) -->
+        <div class="ship-travel" aria-hidden="true">
+            <div class="cargo-ship">
+                <svg viewBox="0 0 240 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="shipHull" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#0a2a4a"/>
+                            <stop offset="100%" stop-color="#04121f"/>
+                        </linearGradient>
+                        <linearGradient id="shipAccent" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#00f5ff"/>
+                            <stop offset="50%" stop-color="#6b5cff"/>
+                            <stop offset="100%" stop-color="#ff2bd6"/>
+                        </linearGradient>
+                        <linearGradient id="container1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ff4d6d"/>
+                            <stop offset="100%" stop-color="#b3002d"/>
+                        </linearGradient>
+                        <linearGradient id="container2" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#00d4ff"/>
+                            <stop offset="100%" stop-color="#0066aa"/>
+                        </linearGradient>
+                        <linearGradient id="container3" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ffb703"/>
+                            <stop offset="100%" stop-color="#b36b00"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Hull -->
+                    <path d="M8,78 L18,92 L200,92 L222,78 L222,68 L8,68 Z"
+                          fill="url(#shipHull)" stroke="url(#shipAccent)" stroke-width="1.6"/>
+                    <!-- Deck line -->
+                    <line x1="8" y1="68" x2="222" y2="68" stroke="url(#shipAccent)" stroke-width="1.2" opacity="0.7"/>
+
+                    <!-- Superstructure -->
+                    <rect x="160" y="40" width="50" height="28" rx="3"
+                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.4"/>
+                    <!-- Bridge windows -->
+                    <rect x="166" y="46" width="38" height="8" rx="2" fill="#00e5ff" opacity="0.8"/>
+                    <!-- Funnel -->
+                    <rect x="180" y="28" width="12" height="14" rx="2"
+                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.2"/>
+
+                    <!-- Containers - bottom row -->
+                    <rect x="40" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+                    <rect x="64" y="52" width="22" height="14" rx="1.5" fill="url(#container2)"/>
+                    <rect x="88" y="52" width="22" height="14" rx="1.5" fill="url(#container3)"/>
+                    <rect x="112" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+
+                    <!-- Containers - middle row -->
+                    <rect x="52" y="36" width="22" height="14" rx="1.5" fill="url(#container2)"/>
+                    <rect x="76" y="36" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+                    <rect x="100" y="36" width="22" height="14" rx="1.5" fill="url(#container3)"/>
+
+                    <!-- Containers - top row -->
+                    <rect x="64" y="20" width="22" height="14" rx="1.5" fill="url(#container2)"/>
+                    <rect x="88" y="20" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+
+                    <!-- Bow accent -->
+                    <path d="M8,68 Q4,78 18,92" fill="none" stroke="url(#shipAccent)" stroke-width="1.6"/>
+
+                    <!-- Waterline glow -->
+                    <ellipse cx="115" cy="94" rx="105" ry="6" fill="rgba(0,220,255,0.18)" filter="blur(3px)"/>
+                </svg>
+            </div>
+        </div>
 
         <!-- Wave 1 - Deep -->
         <div class="wave-layer wave-deep">
