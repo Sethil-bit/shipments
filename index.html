@@ -4,19 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Indra · Ongoing Shipments</title>
-    <!-- Favicon (inline SVG — cargo ship, matches the ocean/RGB theme) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%2300f5ff'/%3E%3Cstop%20offset='.5'%20stop-color='%236b5cff'/%3E%3Cstop%20offset='1'%20stop-color='%23ff2bd6'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='h'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%2300e5ff'/%3E%3Cstop%20offset='1'%20stop-color='%230b6fd6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='15'%20fill='%2305142b'/%3E%3Ccircle%20cx='32'%20cy='30'%20r='22'%20fill='%2300e5ff'%20opacity='.10'/%3E%3Cpath%20d='M8%2040%20L56%2040%20L50%2052%20L14%2052%20Z'%20fill='url(%23h)'/%3E%3Crect%20x='44'%20y='30'%20width='10'%20height='8'%20rx='1'%20fill='%230d2f4f'%20stroke='url(%23g)'%20stroke-width='1'/%3E%3Crect%20x='48'%20y='24'%20width='4'%20height='6'%20rx='0.5'%20fill='%230d2f4f'%20stroke='url(%23g)'%20stroke-width='0.8'/%3E%3Crect%20x='14'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Crect%20x='22'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%2300d4ff'/%3E%3Crect%20x='30'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ffb703'/%3E%3Crect%20x='38'%20y='36'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Crect%20x='18'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%2300d4ff'/%3E%3Crect%20x='26'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ffb703'/%3E%3Crect%20x='34'%20y='30'%20width='6'%20height='4'%20rx='0.5'%20fill='%23ff4d6d'/%3E%3Cpath%20d='M6%2056c5-3.5%2011-3.5%2016%200s11%203.5%2016%200%2011-3.5%2016%200'%20fill='none'%20stroke='%2300f5ff'%20stroke-width='3'%20stroke-linecap='round'%20opacity='.55'/%3E%3C/svg%3E" />
-    <!-- Inter font + Font Awesome icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ----- RESET & BASE ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --edge: 22px;
+            --panel-w: 230px;
         }
 
         body {
@@ -26,529 +24,807 @@
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
-            background: #0b1120;
+            background: #02040a;
             overflow: hidden;
             position: relative;
+            isolation: isolate;
         }
 
-        /* ----- REALISTIC OCEAN + RGB AMBIENT BACKGROUND ----- */
+        /* ---------- DEEP DARK OCEAN BACKGROUND ---------- */
         .ocean-bg {
             position: fixed;
             inset: 0;
             z-index: 0;
             overflow: hidden;
             background:
-                radial-gradient(circle at 50% 72%, rgba(0, 229, 255, .18), transparent 34%),
-                radial-gradient(circle at 15% 25%, rgba(255, 0, 153, .13), transparent 30%),
-                radial-gradient(circle at 85% 18%, rgba(0, 102, 255, .18), transparent 32%),
-                linear-gradient(180deg, #020617 0%, #061a35 42%, #03152b 100%);
+                radial-gradient(circle at 50% 74%, rgba(0, 130, 190, .09), transparent 36%),
+                radial-gradient(circle at 14% 24%, rgba(40, 55, 115, .14), transparent 32%),
+                radial-gradient(circle at 86% 18%, rgba(30, 65, 130, .14), transparent 34%),
+                linear-gradient(180deg, #02040a 0%, #060a14 44%, #010207 100%);
+            transition: filter 1.5s ease;
         }
+        body.wx-rain  .ocean-bg,
+        body.wx-storm .ocean-bg { filter: brightness(.92) saturate(.92); }
+        body.wx-fog   .ocean-bg { filter: brightness(.96) saturate(.8) contrast(.96); }
 
-        /* Moving RGB light fields */
         .ocean-bg::before,
         .ocean-bg::after {
             content: "";
             position: absolute;
             inset: -25%;
             pointer-events: none;
-            filter: blur(32px);
-            opacity: .38;
+            filter: blur(44px);
+            opacity: .30;
             animation: rgbDrift 30s ease-in-out infinite alternate;
         }
-
         .ocean-bg::before {
             background:
-                radial-gradient(circle at 20% 35%, rgba(255, 0, 128, .34), transparent 18%),
-                radial-gradient(circle at 75% 30%, rgba(0, 120, 255, .38), transparent 20%),
-                radial-gradient(circle at 55% 78%, rgba(0, 255, 220, .28), transparent 22%);
+                radial-gradient(circle at 20% 35%, rgba(20, 58, 132, .40), transparent 20%),
+                radial-gradient(circle at 75% 30%, rgba(0, 76, 144, .38), transparent 22%),
+                radial-gradient(circle at 55% 78%, rgba(0, 110, 142, .26), transparent 24%);
         }
-
         .ocean-bg::after {
             animation-duration: 38s;
             animation-direction: alternate-reverse;
             background:
-                radial-gradient(circle at 80% 70%, rgba(170, 0, 255, .25), transparent 20%),
-                radial-gradient(circle at 35% 70%, rgba(0, 255, 255, .22), transparent 20%);
+                radial-gradient(circle at 80% 70%, rgba(38, 40, 114, .32), transparent 22%),
+                radial-gradient(circle at 35% 70%, rgba(0, 100, 132, .24), transparent 22%);
         }
 
-        /* Atmospheric horizon */
         .horizon {
             position: absolute;
-            left: -10%;
-            right: -10%;
-            bottom: 25%;
+            left: -10%; right: -10%; bottom: 25%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, .55), rgba(255, 0, 170, .45), transparent);
-            box-shadow: 0 0 30px rgba(0, 220, 255, .45);
-            opacity: .7;
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 245, .30), rgba(65, 100, 210, .22), transparent);
+            box-shadow: 0 0 30px rgba(0, 150, 210, .22);
+            opacity: .55;
             filter: blur(.4px);
         }
 
-        /* Fine realistic water texture */
         .water-texture {
             position: absolute;
             inset: 45% 0 0;
-            opacity: .18;
+            opacity: .12;
             background:
-                repeating-linear-gradient(
-                    178deg,
-                    transparent 0 7px,
-                    rgba(255,255,255,.08) 8px,
-                    transparent 10px 18px
-                ),
-                repeating-linear-gradient(
-                    2deg,
-                    transparent 0 13px,
-                    rgba(0,220,255,.07) 14px,
-                    transparent 16px 28px
-                );
+                repeating-linear-gradient(178deg, transparent 0 7px, rgba(255,255,255,.05) 8px, transparent 10px 18px),
+                repeating-linear-gradient(2deg, transparent 0 13px, rgba(0,180,220,.045) 14px, transparent 16px 28px);
             transform: perspective(600px) rotateX(58deg) scale(1.35);
             transform-origin: bottom;
             animation: waterTexture 18s linear infinite;
         }
 
-        /* Advanced SVG wave layers */
-        .wave-layer {
-            position: absolute;
-            left: -5%;
-            width: 110%;
-            pointer-events: none;
-            overflow: visible;
-        }
+        .wave-layer { position: absolute; left: -5%; width: 110%; pointer-events: none; overflow: visible; }
+        .wave-move  { position: absolute; left: -10%; width: 120%; height: 100%; }
+        .wave-move svg { display: block; width: 100%; height: 100%; overflow: visible; }
 
-        .wave-move {
-            position: absolute;
-            left: -10%;
-            width: 120%;
-            height: 100%;
-        }
+        .wave-deep { bottom: -2%; height: 52%; z-index: 1; opacity: .80; }
+        .wave-deep .wave-move { animation: realisticWave 24s ease-in-out infinite alternate; }
+        .wave-deep svg path { fill: url(#deepGradient); filter: drop-shadow(0 -6px 12px rgba(0, 60, 160, .10)); }
 
-        .wave-move svg {
-            display: block;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
+        .wave-mid { bottom: -5%; height: 43%; z-index: 2; opacity: .84; }
+        .wave-mid .wave-move { animation: realisticWave 18s ease-in-out infinite alternate-reverse; }
+        .wave-mid svg path { fill: url(#midGradient); filter: drop-shadow(0 -5px 11px rgba(0, 170, 210, .11)); }
 
-        .wave-deep {
-            bottom: -2%;
-            height: 52%;
-            z-index: 1;
-            opacity: .78;
-        }
+        .wave-surface { bottom: -8%; height: 34%; z-index: 3; }
+        .wave-surface .wave-move { animation: realisticWave 13s ease-in-out infinite alternate; }
+        .wave-surface svg path { fill: url(#surfaceGradient); filter: drop-shadow(0 -4px 9px rgba(0, 210, 220, .13)); }
 
-        .wave-deep .wave-move {
-            animation: realisticWave 24s ease-in-out infinite alternate;
-        }
+        .wave-sparkle { bottom: -12%; height: 27%; z-index: 4; opacity: .62; }
+        .wave-sparkle .wave-move { animation: realisticWave 9s ease-in-out infinite alternate-reverse; }
+        .wave-sparkle svg path { fill: url(#sparkleGradient); filter: drop-shadow(0 0 6px rgba(200,255,255,.10)); }
 
-        .wave-deep svg path {
-            fill: url(#deepGradient);
-            filter: drop-shadow(0 -6px 12px rgba(0, 90, 255, .12));
-        }
-
-        .wave-mid {
-            bottom: -5%;
-            height: 43%;
-            z-index: 2;
-            opacity: .82;
-        }
-
-        .wave-mid .wave-move {
-            animation: realisticWave 18s ease-in-out infinite alternate-reverse;
-        }
-
-        .wave-mid svg path {
-            fill: url(#midGradient);
-            filter: drop-shadow(0 -5px 11px rgba(0, 220, 255, .14));
-        }
-
-        .wave-surface {
-            bottom: -8%;
-            height: 34%;
-            z-index: 3;
-        }
-
-        .wave-surface .wave-move {
-            animation: realisticWave 13s ease-in-out infinite alternate;
-        }
-
-        .wave-surface svg path {
-            fill: url(#surfaceGradient);
-            filter: drop-shadow(0 -4px 9px rgba(0, 255, 230, .16));
-        }
-
-        .wave-sparkle {
-            bottom: -12%;
-            height: 27%;
-            z-index: 4;
-            opacity: .72;
-        }
-
-        .wave-sparkle .wave-move {
-            animation: realisticWave 9s ease-in-out infinite alternate-reverse;
-        }
-
-        .wave-sparkle svg path {
-            fill: url(#sparkleGradient);
-            filter: drop-shadow(0 0 6px rgba(255,255,255,.14));
-        }
-
-        /* Tiny reflective light streaks */
         .reflection {
-            position: absolute;
-            z-index: 5;
-            width: 20%;
-            height: 2px;
-            border-radius: 50%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), rgba(0,255,255,.65), transparent);
-            filter: blur(.3px);
-            opacity: .45;
+            position: absolute; z-index: 5;
+            width: 20%; height: 2px; border-radius: 50%;
+            background: linear-gradient(90deg, transparent, rgba(220,245,255,.70), rgba(0,200,230,.42), transparent);
+            filter: blur(.3px); opacity: .30;
             animation: reflectionMove 10s ease-in-out infinite;
         }
-
         .reflection.r1 { left: 14%; bottom: 18%; animation-delay: -1s; }
         .reflection.r2 { left: 44%; bottom: 13%; width: 13%; animation-delay: -3s; }
         .reflection.r3 { right: 12%; bottom: 22%; width: 17%; animation-delay: -4.5s; }
 
         .glint {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 6;
+            position: absolute; border-radius: 50%;
+            pointer-events: none; z-index: 6;
             filter: blur(1px);
             animation: floatGlint 14s infinite alternate ease-in-out;
         }
-
         .glint-1 {
-            width: 620px;
-            height: 620px;
-            background: radial-gradient(circle, rgba(0,255,255,.13) 0%, rgba(0,120,255,.05) 28%, transparent 70%);
-            top: 8%;
-            left: -15%;
+            width: 620px; height: 620px;
+            background: radial-gradient(circle, rgba(0,170,220,.09) 0%, rgba(0,70,160,.035) 28%, transparent 70%);
+            top: 8%; left: -15%;
         }
-
         .glint-2 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255,0,180,.10) 0%, rgba(100,0,255,.05) 32%, transparent 70%);
-            top: 25%;
-            right: -12%;
-            animation-delay: 4s;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(55,55,145,.08) 0%, rgba(0,60,140,.035) 32%, transparent 70%);
+            top: 25%; right: -12%; animation-delay: 4s;
         }
 
-        /* ----- CARGO SHIP (traveling forward, left to right) ----- */
+        /* ---------- CARGO SHIP — DARK SHADOW SILHOUETTE ---------- */
         .ship-travel {
             position: absolute;
             z-index: 7;
             bottom: 24%;
-            left: -20%; /* start off-screen left */
-            width: min(300px, 36vw);
+            left: -22%;
+            width: min(320px, 38vw);
             pointer-events: none;
-            animation: shipTravel 80s linear infinite;
+            animation: shipTravel 95s linear infinite;
         }
-
         .cargo-ship {
             width: 100%;
-            opacity: 0.95;
-            filter: drop-shadow(0 0 22px rgba(0, 220, 255, 0.3));
-            animation: shipBob 7s ease-in-out infinite alternate;
+            opacity: 0.55;
+            filter:
+                drop-shadow(0 8px 18px rgba(0, 0, 0, .65))
+                drop-shadow(0 2px 6px rgba(0, 0, 0, .55));
+            animation: shipBob 9s ease-in-out infinite alternate;
             transform-origin: center bottom;
         }
+        .cargo-ship svg { display: block; width: 100%; height: auto; overflow: visible; transform: scaleX(-1); }
 
-        .cargo-ship svg {
-            display: block;
-            width: 100%;
-            height: auto;
-            overflow: visible;
-            /* Flip the ship so the bow faces right — it now moves forward */
-            transform: scaleX(-1);
-        }
+        .cargo-ship .hull        { fill: #05080d; }
+        .cargo-ship .structure   { fill: #070b11; }
+        .cargo-ship .funnel      { fill: #060a0f; }
+        .cargo-ship .container   { fill: #0b1017; }
+        .cargo-ship .container-b { fill: #090d14; }
+        .cargo-ship .container-c { fill: #0c111a; }
+        .cargo-ship .highlight   { fill: #1a2430; opacity: .35; }
+        .cargo-ship .window-glow { fill: #2b4257; opacity: .22; }
 
-        @keyframes shipTravel {
-            0%   { left: -20%; }
-            100% { left: 120%; }
-        }
-
+        @keyframes shipTravel { 0% { left: -22%; } 100% { left: 122%; } }
         @keyframes shipBob {
-            0%   { transform: translateY(0) rotate(-0.7deg); }
-            50%  { transform: translateY(-10px) rotate(0.5deg); }
-            100% { transform: translateY(3px) rotate(-0.4deg); }
+            0%   { transform: translateY(0) rotate(-0.5deg); }
+            50%  { transform: translateY(-7px) rotate(0.35deg); }
+            100% { transform: translateY(2px) rotate(-0.3deg); }
         }
 
-        /* Responsive adjustments */
         @media (max-width: 720px) {
-            .ship-travel {
-                width: 45vw;
-                bottom: 22%;
-            }
-            .cargo-ship {
-                opacity: 0.65;
-            }
+            .ship-travel { width: 46vw; bottom: 22%; }
+            .cargo-ship { opacity: 0.42; }
+        }
+        @media (max-width: 480px) { .ship-travel { display: none; } }
+
+        /* ============================================================
+           WEATHER REACTIVE LAYER
+           ============================================================ */
+        .weather-fx {
+            position: absolute;
+            inset: 0;
+            z-index: 8;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        @media (max-width: 480px) {
-            .ship-travel {
-                display: none;
-            }
+        .fx-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.4s ease;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        /* ----- ANIMATIONS (background) ----- */
+        body.wx-cloudy .clouds { opacity: 0.32; }
+        body.wx-rain   .clouds { opacity: 0.26; }
+        body.wx-storm  .clouds { opacity: 0.34; }
+        body.wx-fog    .clouds { opacity: 0.20; }
+
+        .cloud {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(75,100,140,0.45), rgba(60,80,115,0.16) 45%, transparent 70%);
+            filter: blur(44px);
+            animation: cloudDrift linear infinite;
+            will-change: transform;
+        }
+        @keyframes cloudDrift {
+            from { transform: translateX(-35vw); }
+            to   { transform: translateX(135vw); }
+        }
+
+        body.wx-fog .fog { opacity: 0.35; }
+        .fog {
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(150,170,200,0.05) 25%,
+                rgba(160,180,210,0.10) 50%,
+                rgba(140,160,190,0.07) 72%,
+                transparent 100%);
+            animation: fogPulse 26s ease-in-out infinite alternate;
+        }
+        @keyframes fogPulse {
+            0%   { transform: translateX(-2.5%); opacity: 0.25; }
+            100% { transform: translateX(2.5%);  opacity: 0.45; }
+        }
+
+        body.wx-rain  .rain,
+        body.wx-storm .rain { opacity: 0.85; }
+
+        .raindrop {
+            position: absolute;
+            top: -12%;
+            width: 1px;
+            border-radius: 1px;
+            background: linear-gradient(to bottom, rgba(180,220,255,0), rgba(180,220,255,0.5));
+            animation: rainFall linear infinite;
+            will-change: transform;
+        }
+        @keyframes rainFall {
+            to { transform: translateY(125vh); }
+        }
+
+        .fx-flash {
+            position: absolute;
+            inset: 0;
+            background: rgba(200, 222, 255, 0.42);
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.wx-storm .fx-flash {
+            animation: lightning 10s infinite;
+        }
+        @keyframes lightning {
+            0%, 90%, 100% { opacity: 0; }
+            91% { opacity: 0.42; }
+            92% { opacity: 0.05; }
+            93% { opacity: 0.30; }
+            94% { opacity: 0; }
+        }
+
+        /* ---------- ANIMATIONS ---------- */
         @keyframes realisticWave {
-            0% { transform: translate3d(-2%, 4px, 0) scaleY(.98); }
-            50% { transform: translate3d(1%, -5px, 0) scaleY(1.02); }
+            0%   { transform: translate3d(-2%, 4px, 0) scaleY(.98); }
+            50%  { transform: translate3d(1%, -5px, 0) scaleY(1.02); }
             100% { transform: translate3d(3%, 3px, 0) scaleY(.99); }
         }
-
         @keyframes rgbDrift {
-            0% { transform: translate3d(-3%, -2%, 0) scale(1); }
-            50% { transform: translate3d(3%, 2%, 0) scale(1.08); }
+            0%   { transform: translate3d(-3%, -2%, 0) scale(1); }
+            50%  { transform: translate3d(3%, 2%, 0) scale(1.08); }
             100% { transform: translate3d(-1%, 4%, 0) scale(1.04); }
         }
-
         @keyframes waterTexture {
             from { background-position: 0 0, 0 0; }
-            to { background-position: 0 180px, 120px -120px; }
+            to   { background-position: 0 180px, 120px -120px; }
         }
-
         @keyframes reflectionMove {
-            0%, 100% { transform: translateX(-25%) scaleX(.7); opacity: .15; }
-            50% { transform: translateX(35%) scaleX(1.25); opacity: .72; }
+            0%, 100% { transform: translateX(-25%) scaleX(.7); opacity: .10; }
+            50%      { transform: translateX(35%) scaleX(1.25); opacity: .50; }
         }
-
         @keyframes floatGlint {
-            0% { transform: translate3d(0, 0, 0) scale(1); opacity: .25; }
-            100% { transform: translate3d(55px, -35px, 0) scale(1.18); opacity: .65; }
+            0%   { transform: translate3d(0, 0, 0) scale(1); opacity: .20; }
+            100% { transform: translate3d(55px, -35px, 0) scale(1.18); opacity: .50; }
+        }
+        @keyframes fadeSlideIn {
+            0%   { opacity: 0; transform: translateY(18px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes panelIn {
+            from { opacity: 0; transform: translateY(-8px) scale(.98); }
+            to   { opacity: 1; transform: none; }
         }
 
-        /* ----- MAIN CARD ----- */
+        /* ---------- MAIN GLASS CARD ---------- */
         .card {
             position: relative;
             z-index: 10;
             width: 100%;
             max-width: 500px;
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
-                rgba(2, 10, 28, .42);
-            backdrop-filter: blur(14px) saturate(125%);
-            -webkit-backdrop-filter: blur(14px) saturate(125%);
             border-radius: 2.5rem;
             padding: 2.8rem 2.2rem;
-            border: 1px solid rgba(255,255,255,.13);
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.022)),
+                rgba(3, 7, 15, .55);
+            backdrop-filter: blur(32px) saturate(170%) contrast(110%);
+            -webkit-backdrop-filter: blur(32px) saturate(170%) contrast(110%);
+            border: 1px solid rgba(255,255,255,.14);
             box-shadow:
-                0 28px 60px rgba(0,0,0,.52),
-                inset 0 1px 0 rgba(255,255,255,.11),
-                0 0 35px rgba(0,190,255,.055);
-            transition: transform .35s ease, box-shadow .35s ease;
-            transform: translateZ(0);
+                0 38px 90px rgba(0,0,0,.62),
+                inset 0 1px 0 rgba(255,255,255,.20),
+                inset 0 -1px 0 rgba(255,255,255,.045);
             overflow: hidden;
+            animation: fadeSlideIn .6s ease;
         }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(110deg, rgba(0,255,255,.55), transparent 30%, rgba(255,0,170,.35), transparent 70%, rgba(0,120,255,.45));
-            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: .65;
-            pointer-events: none;
-            animation: borderRGB 16s linear infinite;
-        }
+        .dashboard { position: relative; }
 
-        @keyframes borderRGB {
-            to { filter: hue-rotate(360deg); }
-        }
-
-        .card:hover {
-            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        }
-
-        /* ----- DASHBOARD ----- */
-        .dashboard {
-            animation: fadeSlideIn 0.6s ease;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 0.2rem;
-        }
-
+        .brand { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem; }
         .brand i {
             font-size: 2.2rem;
             background: linear-gradient(135deg, #00f5ff, #6b5cff 48%, #ff2bd6);
-            -webkit-background-clip: text;
-            background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 0 10px rgba(0,220,255,.38));
-            animation: iconRGB 5s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(0,200,255,.30));
         }
-
-        @keyframes iconRGB {
-            to { filter: hue-rotate(360deg) drop-shadow(0 0 12px rgba(0,220,255,.42)); }
-        }
-
-        h1 {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
-            letter-spacing: -0.02em;
-        }
-
+        h1 { font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: -0.02em; }
         .subhead {
-            color: rgba(235,250,255,.68);
-            font-size: .9rem;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            padding-left: .8rem;
-            border-left: 3px solid #00eaff;
-            text-shadow: 0 0 14px rgba(0,230,255,.25);
+            color: rgba(220,240,250,.66);
+            font-size: .9rem; font-weight: 500;
+            margin-bottom: 2rem; padding-left: .8rem;
+            border-left: 3px solid #00d5ea;
         }
-
         .divider {
             height: 1px;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.08), transparent);
+            background: linear-gradient(to right, rgba(255,255,255,.10), rgba(255,255,255,.02), transparent);
             margin: 1.2rem 0 1.8rem 0;
         }
-
-        .link-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+        .link-grid { display: flex; flex-direction: column; gap: 1rem; }
 
         .link-card {
             position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
-            backdrop-filter: blur(8px) saturate(115%);
-            -webkit-backdrop-filter: blur(8px) saturate(115%);
             padding: 1.2rem 1.5rem;
             border-radius: 1.55rem;
-            border: 1px solid rgba(255,255,255,.095);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-decoration: none;
-            color: #fff;
-            transition: transform .35s cubic-bezier(.2,.8,.2,1), background .35s, border-color .35s, box-shadow .35s;
-            cursor: pointer;
-            transform: translateZ(0);
+            display: flex; align-items: center; justify-content: space-between;
+            text-decoration: none; color: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+            border: 1px solid rgba(255,255,255,.09);
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            box-shadow: 0 12px 30px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.14);
+            transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
         }
-
-        .link-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(110deg, transparent 15%, rgba(0,255,255,.10) 45%, rgba(255,0,170,.08) 55%, transparent 80%);
-            transform: translateX(-110%);
-            transition: transform .65s ease;
-        }
-
-        .link-card:hover::before {
-            transform: translateX(110%);
-        }
-
         .link-card:hover {
-            background: linear-gradient(135deg, rgba(0,220,255,.11), rgba(255,0,180,.065));
-            border-color: rgba(0,230,255,.28);
-            transform: translateX(7px) translateY(-2px) scale(1.012) translateZ(0);
-            box-shadow: 0 16px 34px rgba(0,0,0,.35), 0 0 28px rgba(0,210,255,.09);
+            background: linear-gradient(135deg, rgba(0,170,225,.09), rgba(255,255,255,.03));
+            border-color: rgba(120,215,255,.24);
+            box-shadow:
+                0 14px 32px rgba(0,0,0,.42),
+                0 0 24px rgba(0,170,225,.08),
+                inset 0 1px 0 rgba(255,255,255,.18);
         }
-
-        .link-left {
-            display: flex;
-            align-items: center;
-            gap: 0.9rem;
-        }
-
+        .link-left { display: flex; align-items: center; gap: 0.9rem; }
         .link-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 44px; height: 44px; border-radius: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem;
-            transition: 0.2s;
-            transform: translateZ(0);
+            border: 1px solid rgba(255,255,255,.10);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
         }
+        .link-card:nth-child(1) .link-icon { background: linear-gradient(145deg, rgba(255,70,100,.65), rgba(140,0,45,.42)); color: #fff; }
+        .link-card:nth-child(2) .link-icon { background: rgba(245,250,255,.70); color: #d00000; }
 
-        .link-card:hover .link-icon {
-            transform: scale(1.05) translateZ(0);
-        }
-
-        .link-card:nth-child(1) .link-icon {
-            background: rgba(255, 0, 0, 0.75);
-            color: #FFFFFF;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.25);
-        }
-
-        .link-card:nth-child(2) .link-icon {
-            background: rgba(255, 255, 255, 0.85);
-            color: #FF0000;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .link-label {
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-
-        .link-sub {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.35);
-            margin-top: 0.05rem;
-        }
-
-        .link-arrow {
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 1.4rem;
-            transition: 0.25s;
-        }
-
-        .link-card:hover .link-arrow {
-            color: #7aa9ff;
-            transform: translateX(6px) translateZ(0);
-        }
-
-        @keyframes fadeSlideIn {
-            0% {
-                opacity: 0;
-                transform: translateY(25px) translateZ(0);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) translateZ(0);
-            }
-        }
+        .link-label { font-weight: 600; font-size: 1.02rem; letter-spacing: -.01em; }
+        .link-sub { font-size: 0.74rem; color: rgba(255, 255, 255, 0.38); margin-top: 0.05rem; }
+        .link-arrow { color: rgba(255, 255, 255, 0.22); font-size: 1.3rem; transition: color .25s ease; }
+        .link-card:hover .link-arrow { color: #8cc6ff; }
 
         @media (max-width: 480px) {
-            .card {
-                padding: 2rem 1.5rem;
-                border-radius: 2rem;
-            }
-            h1 {
-                font-size: 1.4rem;
-            }
-            .brand i {
-                font-size: 1.8rem;
-            }
+            .card { padding: 2rem 1.5rem; border-radius: 2rem; }
+            h1 { font-size: 1.4rem; }
+            .brand i { font-size: 1.8rem; }
+        }
+
+        /* ============================================================
+           RIGHT-SIDE STACK  (Weather + To-Do + Link)
+           ============================================================ */
+        .glass-corner {
+            position: fixed;
+            z-index: 20;
+            top: var(--edge);
+            right: var(--edge);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        /* ============================================================
+           LEFT-SIDE STACK  (China Holiday)
+           ============================================================ */
+        .glass-left {
+            position: fixed;
+            z-index: 20;
+            top: var(--edge);
+            left: var(--edge);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .glass-panel {
+            width: var(--panel-w);
+            padding: 13px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,.16);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.03) 45%, rgba(255,255,255,.01)),
+                rgba(3, 8, 18, .50);
+            backdrop-filter: blur(28px) saturate(175%) contrast(108%);
+            -webkit-backdrop-filter: blur(28px) saturate(175%) contrast(108%);
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.45),
+                inset 0 1px 0 rgba(255,255,255,.22),
+                inset 0 -1px 0 rgba(255,255,255,.045);
+        }
+        .glass-kicker {
+            font-size: .60rem; text-transform: uppercase;
+            letter-spacing: .14em; color: rgba(255,255,255,.52); font-weight: 700;
+        }
+        .glass-value {
+            margin-top: 3px; font-size: 1.05rem; font-weight: 700;
+            color: #fff; letter-spacing: -.01em;
+        }
+        .glass-small { margin-top: 4px; font-size: .67rem; color: rgba(215,238,250,.62); }
+        .weather-row { display: flex; align-items: center; gap: 10px; }
+        .weather-icon {
+            font-size: 1.5rem; color: #8ee9ff;
+            filter: drop-shadow(0 0 8px rgba(0,190,230,.40));
+        }
+
+        .calendar-glass {
+            width: var(--panel-w);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.15);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.028)),
+                rgba(3, 8, 18, .48);
+            backdrop-filter: blur(26px) saturate(175%);
+            -webkit-backdrop-filter: blur(26px) saturate(175%);
+            box-shadow:
+                0 14px 34px rgba(0,0,0,.40),
+                inset 0 1px 0 rgba(255,255,255,.18);
+            color: #fff;
+        }
+        .calendar-title { font-size: .74rem; font-weight: 650; letter-spacing: -.005em; }
+        .calendar-state { font-size: .62rem; color: rgba(255,255,255,.50); margin-top: 2px; }
+
+        .ios-toggle {
+            appearance: none; width: 44px; height: 26px;
+            border: 0; border-radius: 999px;
+            background: rgba(255,255,255,.13);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.15), inset 0 2px 5px rgba(0,0,0,.35);
+            position: relative; cursor: pointer;
+            transition: background .35s ease, box-shadow .35s ease;
+            flex-shrink: 0;
+        }
+        .ios-toggle:before {
+            content: ""; position: absolute; top: 3px; left: 3px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: linear-gradient(145deg, #fff, #cfd9e3);
+            box-shadow: 0 2px 7px rgba(0,0,0,.45), inset 0 1px 1px rgba(255,255,255,.8);
+            transition: transform .35s ease;
+        }
+        .ios-toggle:checked {
+            background: linear-gradient(135deg, #00c2e6, #3a63e6 55%, #8b2bd6);
+            box-shadow: 0 0 18px rgba(0,180,230,.24), inset 0 0 0 1px rgba(255,255,255,.24);
+        }
+        .ios-toggle:checked:before { transform: translateX(18px); }
+
+        /* ---------- SHARED TOGGLE BUTTONS ---------- */
+        .todo-toggle,
+        .link-toggle {
+            position: relative;
+            width: 46px; height: 46px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,.16);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.03) 45%, rgba(255,255,255,.01)),
+                rgba(3, 8, 18, .50);
+            backdrop-filter: blur(28px) saturate(175%);
+            -webkit-backdrop-filter: blur(28px) saturate(175%);
+            box-shadow:
+                0 14px 34px rgba(0,0,0,.40),
+                inset 0 1px 0 rgba(255,255,255,.20);
+            color: #cfe9ff;
+            font-size: 1.02rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .25s, border-color .25s, color .25s, transform .15s, box-shadow .25s;
+            text-decoration: none;
+        }
+        .todo-toggle:hover,
+        .link-toggle:hover {
+            background:
+                linear-gradient(135deg, rgba(0,180,230,.18), rgba(255,255,255,.04)),
+                rgba(3, 8, 18, .55);
+            border-color: rgba(120,215,255,.32);
+            color: #fff;
+        }
+        .todo-toggle:active,
+        .link-toggle:active { transform: scale(.94); }
+        .todo-toggle.active {
+            color: #fff;
+            border-color: rgba(120,215,255,.42);
+            box-shadow:
+                0 14px 34px rgba(0,0,0,.45),
+                0 0 22px rgba(0,180,230,.22),
+                inset 0 1px 0 rgba(255,255,255,.26);
+        }
+        .todo-badge {
+            position: absolute;
+            top: -6px; right: -6px;
+            min-width: 20px; height: 20px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #00c2e6, #3a63e6 60%, #8b2bd6);
+            color: #fff;
+            font-size: .62rem; font-weight: 700; line-height: 1;
+            display: none; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,140,220,.45), inset 0 1px 0 rgba(255,255,255,.30);
+        }
+        .todo-badge.show { display: flex; }
+
+        /* ---------- POPUP PANELS ---------- */
+        .china-calendar,
+        .todo-panel {
+            position: fixed;
+            width: min(340px, calc(100vw - 2 * var(--edge)));
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,.15);
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.03)),
+                rgba(3, 8, 18, .68);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            box-shadow:
+                0 30px 70px rgba(0,0,0,.58),
+                inset 0 1px 0 rgba(255,255,255,.20);
+            z-index: 22;
+            visibility: hidden;
+            top: 250px; /* JS overrides */
+        }
+
+        /* China calendar — anchored to the LEFT */
+        .china-calendar {
+            left: var(--edge);
+            right: auto;
+            display: none;
+            padding: 16px;
+        }
+        .china-calendar.show { display: block; animation: panelIn .30s ease; visibility: visible; }
+
+        /* To-Do panel — anchored to the RIGHT */
+        .todo-panel {
+            right: var(--edge);
+            left: auto;
+            display: none;
+            flex-direction: column;
+            padding: 18px;
+            overflow: hidden;
+        }
+        .todo-panel.show { display: flex; animation: panelIn .30s ease; visibility: visible; }
+
+        .china-head {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; color: #fff;
+        }
+        .china-head strong { font-size: .82rem; font-weight: 650; }
+        .china-head span { font-size: .70rem; color: rgba(255,255,255,.5); }
+
+        .holiday-list { display: grid; gap: 6px; }
+        .holiday {
+            display: flex; justify-content: space-between;
+            padding: 9px 11px; border-radius: 12px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+            font-size: .72rem; color: rgba(240,248,255,.86);
+        }
+        .holiday span:last-child { color: #8fe4ff; font-weight: 650; }
+
+        .todo-head {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 12px;
+        }
+        .todo-head strong { font-size: .86rem; color: #fff; font-weight: 650; }
+        .todo-head span { font-size: .67rem; color: rgba(255,255,255,.45); }
+
+        .todo-add { display: flex; gap: 8px; margin-bottom: 10px; }
+        .todo-add input {
+            flex: 1; min-width: 0;
+            font: inherit; font-size: .78rem;
+            color: #fff;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 13px;
+            padding: 10px 13px;
+            outline: none;
+            transition: border-color .2s, background .2s, box-shadow .2s;
+        }
+        .todo-add input::placeholder { color: rgba(255,255,255,.32); }
+        .todo-add input:focus {
+            border-color: rgba(120,215,255,.42);
+            background: rgba(255,255,255,.09);
+            box-shadow: 0 0 0 3px rgba(0,170,230,.10);
+        }
+        .todo-add button {
+            flex-shrink: 0;
+            width: 40px; height: 40px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: linear-gradient(135deg, rgba(0,190,230,.30), rgba(70,90,220,.22));
+            color: #fff; font-size: .8rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+            transition: filter .2s, box-shadow .2s, transform .15s;
+        }
+        .todo-add button:hover {
+            filter: brightness(1.15);
+            box-shadow: 0 0 18px rgba(0,170,230,.28), inset 0 1px 0 rgba(255,255,255,.28);
+        }
+        .todo-add button:active { transform: scale(.94); }
+
+        .todo-filters {
+            display: flex; align-items: center; gap: 6px;
+            margin-bottom: 10px;
+        }
+        .filter-btn {
+            font: inherit;
+            font-size: .67rem; font-weight: 600;
+            padding: 5px 11px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.10);
+            background: rgba(255,255,255,.04);
+            color: rgba(255,255,255,.55);
+            cursor: pointer;
+            transition: background .2s, color .2s, border-color .2s;
+        }
+        .filter-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+        .filter-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, rgba(0,190,230,.30), rgba(70,90,220,.22));
+            border-color: rgba(120,215,255,.32);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.20);
+        }
+        .todo-clear {
+            margin-left: auto;
+            width: 30px; height: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.10);
+            background: rgba(255,255,255,.04);
+            color: rgba(255,255,255,.45);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .68rem;
+            transition: background .2s, color .2s, border-color .2s;
+        }
+        .todo-clear:hover {
+            background: rgba(255,70,100,.14);
+            border-color: rgba(255,70,100,.28);
+            color: #ff9fb0;
+        }
+
+        .todo-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 7px;
+            overflow-y: auto;
+            flex: 1; min-height: 0;
+            padding-right: 3px;
+            margin-right: -3px;
+        }
+        .todo-list::-webkit-scrollbar { width: 6px; }
+        .todo-list::-webkit-scrollbar-track { background: transparent; }
+        .todo-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.12);
+            border-radius: 999px;
+        }
+        .todo-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.22); }
+
+        .todo-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 10px 10px 12px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+            transition: background .2s, border-color .2s;
+        }
+        .todo-item:hover {
+            background: rgba(255,255,255,.08);
+            border-color: rgba(255,255,255,.12);
+        }
+
+        .todo-check {
+            flex-shrink: 0;
+            width: 22px; height: 22px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(255,255,255,.28);
+            background: rgba(255,255,255,.04);
+            color: transparent;
+            font-size: .6rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, color .2s, box-shadow .2s;
+        }
+        .todo-check:hover {
+            border-color: rgba(120,215,255,.55);
+            background: rgba(0,180,230,.12);
+        }
+        .todo-item.done .todo-check {
+            background: linear-gradient(135deg, #00c2e6, #3a63e6 60%, #8b2bd6);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0,170,230,.30), inset 0 1px 0 rgba(255,255,255,.30);
+        }
+
+        .todo-text {
+            flex: 1; min-width: 0;
+            font-size: .82rem;
+            color: rgba(240,248,255,.92);
+            line-height: 1.35;
+            word-break: break-word;
+            cursor: text;
+            transition: color .2s, opacity .2s;
+        }
+        .todo-item.done .todo-text {
+            color: rgba(200,220,235,.42);
+            text-decoration: line-through;
+            text-decoration-color: rgba(140,180,210,.35);
+        }
+
+        .todo-edit-input {
+            flex: 1; min-width: 0;
+            font: inherit; font-size: .82rem;
+            color: #fff;
+            background: rgba(0,0,0,.28);
+            border: 1px solid rgba(120,215,255,.45);
+            border-radius: 8px;
+            padding: 4px 8px;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,170,230,.12);
+        }
+
+        .todo-actions {
+            display: flex; gap: 2px;
+            opacity: 0;
+            transition: opacity .2s;
+            flex-shrink: 0;
+        }
+        .todo-item:hover .todo-actions,
+        .todo-item:focus-within .todo-actions { opacity: 1; }
+        @media (hover: none) { .todo-actions { opacity: 1; } }
+
+        .todo-edit, .todo-del {
+            width: 26px; height: 26px;
+            border-radius: 9px;
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,.38);
+            font-size: .66rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .2s, color .2s;
+        }
+        .todo-edit:hover { background: rgba(0,180,230,.16); color: #9fe4ff; }
+        .todo-del:hover  { background: rgba(255,70,100,.16); color: #ff9fb0; }
+
+        .todo-empty {
+            text-align: center;
+            font-size: .74rem;
+            color: rgba(255,255,255,.38);
+            padding: 22px 10px;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            :root { --edge: 14px; --panel-w: 200px; }
+        }
+        @media (max-width: 650px) {
+            :root { --edge: 12px; --panel-w: 165px; }
+            .glass-value { font-size: .92rem; }
+            .weather-icon { font-size: 1.30rem; }
+            .calendar-title { font-size: .68rem; }
+            .calendar-state { font-size: .58rem; }
+            .todo-toggle,
+            .link-toggle { width: 44px; height: 44px; border-radius: 15px; }
+        }
+        @media (max-width: 420px) {
+            :root { --panel-w: 150px; }
+            .calendar-title { font-size: .64rem; }
         }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: .001ms !important;
                 animation-iteration-count: 1 !important;
-                scroll-behavior: auto !important;
+                transition-duration: .001ms !important;
             }
+            .raindrop, .cloud { animation: none !important; opacity: 0 !important; }
         }
 
-        /* ----- PERFORMANCE OPTIMIZATION ----- */
         body.page-hidden .wave-move,
         body.page-hidden .ocean-bg::before,
         body.page-hidden .ocean-bg::after,
@@ -556,72 +832,39 @@
         body.page-hidden .reflection,
         body.page-hidden .glint,
         body.page-hidden .ship-travel,
-        body.page-hidden .cargo-ship {
+        body.page-hidden .cargo-ship,
+        body.page-hidden .raindrop,
+        body.page-hidden .cloud {
             animation-play-state: paused !important;
-        }
-
-        @media (max-width: 700px) {
-            .ocean-bg::before,
-            .ocean-bg::after {
-                filter: blur(22px);
-                opacity: .28;
-            }
-
-            .water-texture {
-                opacity: .10;
-            }
-
-            .reflection {
-                opacity: .25;
-            }
-
-            .card {
-                backdrop-filter: blur(10px) saturate(115%);
-                -webkit-backdrop-filter: blur(10px) saturate(115%);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .ocean-bg::before,
-            .ocean-bg::after,
-            .wave-move,
-            .water-texture,
-            .reflection,
-            .glint,
-            .card::before,
-            .ship-travel,
-            .cargo-ship {
-                animation: none !important;
-            }
         }
     </style>
 </head>
 <body>
 
-    <!-- VISIBLE OCEAN WAVES -->
+    <!-- OCEAN BACKGROUND -->
     <div class="ocean-bg">
         <svg width="0" height="0" aria-hidden="true" style="position:absolute">
             <defs>
                 <linearGradient id="deepGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#071b3a"/>
-                    <stop offset="48%" stop-color="#063b69"/>
-                    <stop offset="100%" stop-color="#020d24"/>
+                    <stop offset="0%" stop-color="#04122a"/>
+                    <stop offset="48%" stop-color="#032a4c"/>
+                    <stop offset="100%" stop-color="#01060f"/>
                 </linearGradient>
                 <linearGradient id="midGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#087caa" stop-opacity=".82"/>
-                    <stop offset="42%" stop-color="#064d78" stop-opacity=".9"/>
-                    <stop offset="100%" stop-color="#021d42"/>
+                    <stop offset="0%" stop-color="#065a78" stop-opacity=".82"/>
+                    <stop offset="42%" stop-color="#043a58" stop-opacity=".9"/>
+                    <stop offset="100%" stop-color="#01101f"/>
                 </linearGradient>
                 <linearGradient id="surfaceGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#13d9df" stop-opacity=".42"/>
-                    <stop offset="28%" stop-color="#087da9" stop-opacity=".66"/>
-                    <stop offset="100%" stop-color="#032d57" stop-opacity=".94"/>
+                    <stop offset="0%" stop-color="#0aa2b0" stop-opacity=".38"/>
+                    <stop offset="28%" stop-color="#055c7e" stop-opacity=".62"/>
+                    <stop offset="100%" stop-color="#02142a" stop-opacity=".95"/>
                 </linearGradient>
                 <linearGradient id="sparkleGradient" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#b9ffff" stop-opacity=".18"/>
-                    <stop offset="45%" stop-color="#ffffff" stop-opacity=".28"/>
-                    <stop offset="75%" stop-color="#ff5cda" stop-opacity=".10"/>
-                    <stop offset="100%" stop-color="#00eaff" stop-opacity=".18"/>
+                    <stop offset="0%" stop-color="#a8f4ff" stop-opacity=".14"/>
+                    <stop offset="45%" stop-color="#ffffff" stop-opacity=".20"/>
+                    <stop offset="75%" stop-color="#7fb6ff" stop-opacity=".08"/>
+                    <stop offset="100%" stop-color="#00d5ee" stop-opacity=".14"/>
                 </linearGradient>
             </defs>
         </svg>
@@ -633,110 +876,147 @@
         <div class="reflection r2"></div>
         <div class="reflection r3"></div>
 
-        <!-- CARGO SHIP (traveling forward, left to right) -->
+        <!-- CARGO SHIP -->
         <div class="ship-travel" aria-hidden="true">
             <div class="cargo-ship">
                 <svg viewBox="0 0 240 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="shipHull" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#0a2a4a"/>
-                            <stop offset="100%" stop-color="#04121f"/>
-                        </linearGradient>
-                        <linearGradient id="shipAccent" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="#00f5ff"/>
-                            <stop offset="50%" stop-color="#6b5cff"/>
-                            <stop offset="100%" stop-color="#ff2bd6"/>
-                        </linearGradient>
-                        <linearGradient id="container1" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ff4d6d"/>
-                            <stop offset="100%" stop-color="#b3002d"/>
-                        </linearGradient>
-                        <linearGradient id="container2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#00d4ff"/>
-                            <stop offset="100%" stop-color="#0066aa"/>
-                        </linearGradient>
-                        <linearGradient id="container3" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ffb703"/>
-                            <stop offset="100%" stop-color="#b36b00"/>
-                        </linearGradient>
-                    </defs>
+                    <path class="hull" d="M8,78 L18,92 L200,92 L222,78 L222,68 L8,68 Z"/>
+                    <line class="highlight" x1="8" y1="68" x2="222" y2="68" stroke="#1f2b38" stroke-width="1" opacity="0.5"/>
+                    <rect class="structure" x="160" y="40" width="50" height="28" rx="3"/>
+                    <rect class="window-glow" x="166" y="46" width="38" height="8" rx="2"/>
+                    <rect class="funnel" x="180" y="28" width="12" height="14" rx="2"/>
 
-                    <!-- Hull -->
-                    <path d="M8,78 L18,92 L200,92 L222,78 L222,68 L8,68 Z"
-                          fill="url(#shipHull)" stroke="url(#shipAccent)" stroke-width="1.6"/>
-                    <!-- Deck line -->
-                    <line x1="8" y1="68" x2="222" y2="68" stroke="url(#shipAccent)" stroke-width="1.2" opacity="0.7"/>
+                    <rect class="container"   x="40"  y="52" width="22" height="14" rx="1.5"/>
+                    <rect class="container-b" x="64"  y="52" width="22" height="14" rx="1.5"/>
+                    <rect class="container-c" x="88"  y="52" width="22" height="14" rx="1.5"/>
+                    <rect class="container"   x="112" y="52" width="22" height="14" rx="1.5"/>
 
-                    <!-- Superstructure -->
-                    <rect x="160" y="40" width="50" height="28" rx="3"
-                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.4"/>
-                    <!-- Bridge windows -->
-                    <rect x="166" y="46" width="38" height="8" rx="2" fill="#00e5ff" opacity="0.8"/>
-                    <!-- Funnel -->
-                    <rect x="180" y="28" width="12" height="14" rx="2"
-                          fill="#0d2f4f" stroke="url(#shipAccent)" stroke-width="1.2"/>
+                    <rect class="container-b" x="52"  y="36" width="22" height="14" rx="1.5"/>
+                    <rect class="container"   x="76"  y="36" width="22" height="14" rx="1.5"/>
+                    <rect class="container-c" x="100" y="36" width="22" height="14" rx="1.5"/>
 
-                    <!-- Containers - bottom row -->
-                    <rect x="40" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
-                    <rect x="64" y="52" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="88" y="52" width="22" height="14" rx="1.5" fill="url(#container3)"/>
-                    <rect x="112" y="52" width="22" height="14" rx="1.5" fill="url(#container1)"/>
+                    <rect class="container-b" x="64" y="20" width="22" height="14" rx="1.5"/>
+                    <rect class="container"   x="88" y="20" width="22" height="14" rx="1.5"/>
 
-                    <!-- Containers - middle row -->
-                    <rect x="52" y="36" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="76" y="36" width="22" height="14" rx="1.5" fill="url(#container1)"/>
-                    <rect x="100" y="36" width="22" height="14" rx="1.5" fill="url(#container3)"/>
-
-                    <!-- Containers - top row -->
-                    <rect x="64" y="20" width="22" height="14" rx="1.5" fill="url(#container2)"/>
-                    <rect x="88" y="20" width="22" height="14" rx="1.5" fill="url(#container1)"/>
-
-                    <!-- Bow accent -->
-                    <path d="M8,68 Q4,78 18,92" fill="none" stroke="url(#shipAccent)" stroke-width="1.6"/>
-
-                    <!-- Waterline glow -->
-                    <ellipse cx="115" cy="94" rx="105" ry="6" fill="rgba(0,220,255,0.18)" filter="blur(3px)"/>
+                    <path d="M8,68 Q4,78 18,92" fill="none" stroke="#121a24" stroke-width="1.2"/>
+                    <ellipse cx="115" cy="95" rx="108" ry="5" fill="rgba(0,0,0,0.55)" filter="blur(4px)"/>
                 </svg>
             </div>
         </div>
 
-        <!-- Wave 1 - Deep -->
+        <!-- Waves -->
         <div class="wave-layer wave-deep">
             <div class="wave-move">
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0 163 C150 142 255 184 390 158 S610 136 760 164 S980 190 1110 160 S1220 143 1300 158 L1300 220 L0 220 Z"/></svg>
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,50 L1200,200 L0,200 Z"/></svg>
             </div>
         </div>
-
-        <!-- Wave 2 - Mid -->
         <div class="wave-layer wave-mid">
             <div class="wave-move">
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,120 C200,50 400,180 600,100 C800,20 1000,160 1200,120 L1200,200 L0,200 Z"/></svg>
             </div>
         </div>
-
-        <!-- Wave 3 - Surface -->
         <div class="wave-layer wave-surface">
             <div class="wave-move">
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,140 C300,80 500,190 800,130 C1000,90 1100,170 1200,140 L1200,200 L0,200 Z"/></svg>
             </div>
         </div>
-
-        <!-- Wave 4 - Sparkle -->
         <div class="wave-layer wave-sparkle">
             <div class="wave-move">
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
                 <svg viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0,160 C200,120 400,190 600,150 C800,110 1000,180 1200,160 L1200,200 L0,200 Z"/></svg>
             </div>
         </div>
+
+        <!-- WEATHER-REACTIVE LAYER -->
+        <div class="weather-fx" aria-hidden="true">
+            <div class="fx-layer clouds" id="cloudLayer"></div>
+            <div class="fx-layer fog" id="fogLayer"></div>
+            <div class="fx-layer rain" id="rainLayer"></div>
+            <div class="fx-flash" id="flashLayer"></div>
+        </div>
+    </div>
+
+    <!-- LEFT-SIDE STACK: China Holiday -->
+    <div class="glass-left">
+      <div class="calendar-glass">
+        <div>
+          <div class="calendar-title">🇨🇳 China Holiday</div>
+          <div class="calendar-state" id="calendarState">Calendar off</div>
+        </div>
+        <input id="chinaToggle" class="ios-toggle" type="checkbox" aria-label="Toggle China holiday calendar">
+      </div>
+    </div>
+
+    <!-- RIGHT-SIDE STACK: Weather + To-Do + Link -->
+    <div class="glass-corner">
+      <div class="glass-panel">
+        <div class="weather-row">
+          <i class="fas fa-cloud-sun weather-icon" id="weatherIcon"></i>
+          <div>
+            <div class="glass-kicker">Live Weather</div>
+            <div class="glass-value" id="weatherTemp">Loading…</div>
+          </div>
+        </div>
+        <div class="glass-small" id="weatherText">Updating real weather</div>
+      </div>
+
+      <button class="todo-toggle" id="todoToggle" type="button"
+              aria-label="Toggle To-Do list" aria-expanded="false" aria-controls="todoPanel">
+        <i class="fas fa-list-check"></i>
+        <span class="todo-badge" id="todoBadge">0</span>
+      </button>
+
+      <a class="link-toggle" href="https://sethil-bit.github.io/lc-ui5/login.html"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Open external link">
+        <i class="fas fa-arrow-up-right-from-square"></i>
+      </a>
+    </div>
+
+    <!-- China holiday popup (LEFT) -->
+    <div class="china-calendar" id="chinaCalendar">
+      <div class="china-head"><strong>🇨🇳 China Public Holidays · 2026</strong><span>2026</span></div>
+      <div class="holiday-list">
+        <div class="holiday"><span>New Year’s Day</span><span>Jan 1</span></div>
+        <div class="holiday"><span>Spring Festival</span><span>Feb 17–23</span></div>
+        <div class="holiday"><span>Qingming Festival</span><span>Apr 4–6</span></div>
+        <div class="holiday"><span>Labour Day</span><span>May 1–5</span></div>
+        <div class="holiday"><span>Dragon Boat Festival</span><span>Jun 19–21</span></div>
+        <div class="holiday"><span>Mid-Autumn Festival</span><span>Sep 25–27</span></div>
+        <div class="holiday"><span>National Day</span><span>Oct 1–7</span></div>
+      </div>
+    </div>
+
+    <!-- To-Do panel (RIGHT) -->
+    <div class="todo-panel" id="todoPanel" role="dialog" aria-label="To-Do list">
+      <div class="todo-head">
+        <strong>To-Do</strong>
+        <span id="todoCount">No tasks</span>
+      </div>
+
+      <form class="todo-add" id="todoForm" autocomplete="off">
+        <input type="text" id="todoInput" placeholder="Add a task…" maxlength="140" aria-label="New task">
+        <button type="submit" aria-label="Add task"><i class="fas fa-plus"></i></button>
+      </form>
+
+      <div class="todo-filters">
+        <button class="filter-btn active" type="button" data-filter="all">All</button>
+        <button class="filter-btn" type="button" data-filter="active">Active</button>
+        <button class="filter-btn" type="button" data-filter="done">Done</button>
+        <button class="todo-clear" id="todoClear" type="button" title="Clear completed" aria-label="Clear completed tasks">
+          <i class="fas fa-broom"></i>
+        </button>
+      </div>
+
+      <ul class="todo-list" id="todoList"></ul>
+      <div class="todo-empty" id="todoEmpty">No tasks yet — add one above ✨</div>
     </div>
 
     <!-- MAIN CARD -->
     <div class="card" role="main">
-
-        <!-- DASHBOARD -->
         <div class="dashboard">
             <div class="brand">
                 <i class="fas fa-ship"></i>
@@ -747,43 +1027,457 @@
             <div class="divider"></div>
 
             <div class="link-grid">
-                <!-- TRADERS Shipments -->
                 <a href="https://docs.google.com/spreadsheets/d/1XVjQzlRxuZlXp0xXWzqg0cQnSKufM73FsxUsqybdIi0/edit?usp=sharing"
-                target="_blank" rel="noopener noreferrer" class="link-card">
-                <div class="link-left">
-                    <div class="link-icon"><i class="fas fa-ship"></i></div>
-                    <div>
-                        <div class="link-label">Indra Traders Shipments</div>
-                        <div class="link-sub">Foton new</div>
+                   target="_blank" rel="noopener noreferrer" class="link-card">
+                    <div class="link-left">
+                        <div class="link-icon"><i class="fas fa-ship"></i></div>
+                        <div>
+                            <div class="link-label">Indra Traders Shipments</div>
+                            <div class="link-sub">Foton new</div>
+                        </div>
                     </div>
-                </div>
-                <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
-            </a>
+                    <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
 
-            <!-- IMS Shipments -->
-            <a href="https://docs.google.com/spreadsheets/d/1PcJH2JXyxoRbuTJ-vRtLPj0DyTb3o7rINuwtqNvNib0/edit?usp=sharing"
-            target="_blank" rel="noopener noreferrer" class="link-card">
-            <div class="link-left">
-                <div class="link-icon"><i class="fas fa-ship"></i></div>
-                <div>
-                    <div class="link-label">Indra Motor Spares Shipments</div>
-                    <div class="link-sub">Foton, JP</div>
-                </div>
+                <a href="https://docs.google.com/spreadsheets/d/1PcJH2JXyxoRbuTJ-vRtLPj0DyTb3o7rINuwtqNvNib0/edit?usp=sharing"
+                   target="_blank" rel="noopener noreferrer" class="link-card">
+                    <div class="link-left">
+                        <div class="link-icon"><i class="fas fa-ship"></i></div>
+                        <div>
+                            <div class="link-label">Indra Motor Spares Shipments</div>
+                            <div class="link-sub">Foton, JP</div>
+                        </div>
+                    </div>
+                    <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
             </div>
-            <span class="link-arrow"><i class="fas fa-arrow-right"></i></span>
-        </a>
+        </div>
     </div>
-</div>
 
-</div>
+<script>
+(() => {
+  /* ============================================================
+     WEATHER REACTIVE BACKGROUND — SUBTLE
+     ============================================================ */
+  const weatherFxBuilt = { rain: false, clouds: false };
 
+  function buildRain() {
+    const c = document.getElementById('rainLayer');
+    if (!c || weatherFxBuilt.rain) return;
+    weatherFxBuilt.rain = true;
+    const N = 20;
+    for (let i = 0; i < N; i++) {
+      const d = document.createElement('span');
+      d.className = 'raindrop';
+      d.style.left = (Math.random() * 100).toFixed(2) + '%';
+      d.style.height = (18 + Math.random() * 22).toFixed(1) + 'px';
+      d.style.opacity = (0.20 + Math.random() * 0.25).toFixed(2);
+      d.style.animationDuration = (0.55 + Math.random() * 0.5).toFixed(2) + 's';
+      d.style.animationDelay = (-Math.random() * 3).toFixed(2) + 's';
+      c.appendChild(d);
+    }
+  }
+
+  function buildClouds() {
+    const c = document.getElementById('cloudLayer');
+    if (!c || weatherFxBuilt.clouds) return;
+    weatherFxBuilt.clouds = true;
+    const N = 3;
+    for (let i = 0; i < N; i++) {
+      const cl = document.createElement('span');
+      cl.className = 'cloud';
+      const w = 340 + Math.random() * 280;
+      const h = 90 + Math.random() * 55;
+      cl.style.width = w + 'px';
+      cl.style.height = h + 'px';
+      cl.style.top = (2 + Math.random() * 20) + '%';
+      cl.style.animationDuration = (65 + Math.random() * 45).toFixed(1) + 's';
+      cl.style.animationDelay = (-Math.random() * 70).toFixed(1) + 's';
+      c.appendChild(cl);
+    }
+  }
+
+  const WX_CLASSES = ['wx-clear','wx-cloudy','wx-rain','wx-storm','wx-fog'];
+
+  function applyWeather(code) {
+    document.body.classList.remove(...WX_CLASSES);
+
+    if (code === 0 || code === 1) {
+      document.body.classList.add('wx-clear');
+    } else if (code === 2 || code === 3) {
+      buildClouds();
+      document.body.classList.add('wx-cloudy');
+    } else if (code === 45 || code === 48) {
+      document.body.classList.add('wx-fog');
+    } else if ([51,53,55,61,63,65,80,81,82].includes(code)) {
+      buildClouds(); buildRain();
+      document.body.classList.add('wx-rain');
+    } else if ([95,96,99].includes(code)) {
+      buildClouds(); buildRain();
+      document.body.classList.add('wx-storm');
+    }
+  }
+
+  /* ============================================================
+     PANEL POSITIONING (JS)
+     ============================================================ */
+  const chinaPanel = document.getElementById('chinaCalendar');
+  const todoPanel  = document.getElementById('todoPanel');
+
+  function edgeValue() {
+    const w = window.innerWidth;
+    return w < 650 ? 12 : (w < 900 ? 14 : 22);
+  }
+
+  function positionPanel(panel) {
+    if (!panel.classList.contains('show')) return;
+
+    const viewportH = window.innerHeight;
+    const edge = edgeValue();
+
+    if (panel === chinaPanel) {
+      /* Anchored to LEFT stack */
+      const leftStack = document.querySelector('.glass-left');
+      if (!leftStack) return;
+      const rect = leftStack.getBoundingClientRect();
+      let top = rect.bottom + 12;
+      const h = panel.offsetHeight;
+      if (top + h > viewportH - edge) {
+        top = Math.max(edge, viewportH - h - edge);
+      }
+      panel.style.top = top + 'px';
+      panel.style.left = edge + 'px';
+      panel.style.right = 'auto';
+      panel.style.maxHeight = '';
+    } else if (panel === todoPanel) {
+      /* Anchored to RIGHT stack */
+      const rightStack = document.querySelector('.glass-corner');
+      if (!rightStack) return;
+      const rect = rightStack.getBoundingClientRect();
+      let top = rect.bottom + 12;
+      panel.style.top = top + 'px';
+      panel.style.right = edge + 'px';
+      panel.style.left = 'auto';
+      const available = viewportH - top - edge;
+      panel.style.maxHeight = Math.min(Math.max(available, 180), 520) + 'px';
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    positionPanel(chinaPanel);
+    positionPanel(todoPanel);
+  });
+
+  /* ============================================================
+     TO-DO
+     ============================================================ */
+  const STORAGE_KEY = 'indra_todo_v1';
+
+  const todoToggle = document.getElementById('todoToggle');
+  const todoForm   = document.getElementById('todoForm');
+  const todoInput  = document.getElementById('todoInput');
+  const todoList   = document.getElementById('todoList');
+  const todoEmpty  = document.getElementById('todoEmpty');
+  const todoCount  = document.getElementById('todoCount');
+  const todoBadge  = document.getElementById('todoBadge');
+  const todoClear  = document.getElementById('todoClear');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+
+  let todos = [];
+  let filter = 'all';
+
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  function loadTodos() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      todos = Array.isArray(parsed)
+        ? parsed.filter(t => t && typeof t.text === 'string' && t.text.trim())
+        : [];
+    } catch { todos = []; }
+  }
+  function saveTodos() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); } catch {}
+  }
+
+  function render() {
+    todoList.innerHTML = '';
+    const visible = todos.filter(t =>
+      filter === 'all' ? true : filter === 'active' ? !t.done : t.done
+    );
+    visible.forEach(t => todoList.appendChild(buildItem(t)));
+
+    const activeCount = todos.filter(t => !t.done).length;
+    const doneCount   = todos.length - activeCount;
+    todoCount.textContent = todos.length === 0
+      ? 'No tasks'
+      : `${activeCount} active · ${doneCount} done`;
+
+    if (activeCount > 0) {
+      todoBadge.textContent = activeCount > 99 ? '99+' : String(activeCount);
+      todoBadge.classList.add('show');
+    } else {
+      todoBadge.classList.remove('show');
+    }
+
+    if (visible.length === 0) {
+      todoEmpty.style.display = 'block';
+      todoEmpty.textContent = todos.length === 0
+        ? 'No tasks yet — add one above ✨'
+        : filter === 'active'
+          ? 'All caught up 🎉'
+          : filter === 'done'
+            ? 'No completed tasks yet'
+            : 'Nothing here';
+    } else {
+      todoEmpty.style.display = 'none';
+    }
+
+    filterBtns.forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+  }
+
+  function buildItem(t) {
+    const li = document.createElement('li');
+    li.className = 'todo-item' + (t.done ? ' done' : '');
+    li.dataset.id = t.id;
+
+    const check = document.createElement('button');
+    check.type = 'button';
+    check.className = 'todo-check';
+    check.setAttribute('aria-label', t.done ? 'Mark as active' : 'Mark as done');
+    check.innerHTML = '<i class="fas fa-check"></i>';
+    check.addEventListener('click', () => {
+      t.done = !t.done;
+      saveTodos();
+      render();
+    });
+
+    const text = document.createElement('span');
+    text.className = 'todo-text';
+    text.textContent = t.text;
+    text.title = 'Double-click to edit';
+    text.addEventListener('dblclick', () => beginEdit(li, t));
+
+    const actions = document.createElement('div');
+    actions.className = 'todo-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'todo-edit';
+    editBtn.setAttribute('aria-label', 'Edit task');
+    editBtn.innerHTML = '<i class="fas fa-pen"></i>';
+    editBtn.addEventListener('click', () => beginEdit(li, t));
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'todo-del';
+    delBtn.setAttribute('aria-label', 'Delete task');
+    delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    delBtn.addEventListener('click', () => {
+      todos = todos.filter(x => x.id !== t.id);
+      saveTodos();
+      render();
+    });
+
+    actions.append(editBtn, delBtn);
+    li.append(check, text, actions);
+    return li;
+  }
+
+  function beginEdit(li, t) {
+    if (li.classList.contains('editing')) return;
+    li.classList.add('editing');
+
+    const textEl = li.querySelector('.todo-text');
+    if (!textEl) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'todo-edit-input';
+    input.value = t.text;
+    input.maxLength = 140;
+
+    textEl.replaceWith(input);
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+
+    let finished = false;
+    const commit = () => {
+      if (finished) return; finished = true;
+      const v = input.value.trim();
+      if (v) { t.text = v; saveTodos(); }
+      render();
+    };
+    const cancel = () => {
+      if (finished) return; finished = true;
+      render();
+    };
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')      { e.preventDefault(); commit(); }
+      else if (e.key === 'Escape'){ e.preventDefault(); cancel(); }
+    });
+    input.addEventListener('blur', commit);
+  }
+
+  todoForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = todoInput.value.trim();
+    if (!v) { todoInput.focus(); return; }
+    todos.unshift({ id: uid(), text: v, done: false, createdAt: Date.now() });
+    todoInput.value = '';
+    saveTodos();
+    render();
+    todoInput.focus();
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  todoClear.addEventListener('click', () => {
+    if (!todos.some(t => t.done)) return;
+    todos = todos.filter(t => !t.done);
+    saveTodos();
+    render();
+  });
+
+  /* ============================================================
+     CHINA CALENDAR
+     ============================================================ */
+  const chinaToggle = document.getElementById('chinaToggle');
+  const calState    = document.getElementById('calendarState');
+
+  function setChinaCalendar(open) {
+    chinaToggle.checked = open;
+    calState.textContent = open ? 'Calendar enabled' : 'Calendar off';
+    try { localStorage.setItem('chinaHolidayCalendar', open ? '1' : '0'); } catch {}
+
+    if (open) {
+      closeTodo();
+      chinaPanel.classList.add('show');
+      positionPanel(chinaPanel);
+    } else {
+      chinaPanel.classList.remove('show');
+    }
+  }
+
+  /* ============================================================
+     PANEL OPEN/CLOSE
+     ============================================================ */
+  function openTodo() {
+    if (chinaPanel.classList.contains('show')) setChinaCalendar(false);
+    todoPanel.classList.add('show');
+    todoToggle.classList.add('active');
+    todoToggle.setAttribute('aria-expanded', 'true');
+    positionPanel(todoPanel);
+    if (window.matchMedia('(hover: hover)').matches) {
+      setTimeout(() => todoInput.focus(), 120);
+    }
+  }
+  function closeTodo() {
+    todoPanel.classList.remove('show');
+    todoToggle.classList.remove('active');
+    todoToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  todoToggle.addEventListener('click', e => {
+    e.stopPropagation();
+    if (todoPanel.classList.contains('show')) closeTodo();
+    else openTodo();
+  });
+
+  chinaToggle.addEventListener('change', () => setChinaCalendar(chinaToggle.checked));
+
+  document.addEventListener('click', e => {
+    if (todoPanel.classList.contains('show') &&
+        !todoPanel.contains(e.target) &&
+        !e.target.closest('.todo-toggle')) {
+      closeTodo();
+    }
+    if (chinaPanel.classList.contains('show') &&
+        !chinaPanel.contains(e.target) &&
+        !e.target.closest('.calendar-glass')) {
+      setChinaCalendar(false);
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (todoPanel.classList.contains('show'))  closeTodo();
+      if (chinaPanel.classList.contains('show')) setChinaCalendar(false);
+    }
+  });
+
+  /* ============================================================
+     WEATHER FETCH
+     ============================================================ */
+  const temp = document.getElementById('weatherTemp');
+  const desc = document.getElementById('weatherText');
+  const icon = document.getElementById('weatherIcon');
+
+  async function weather() {
+    try {
+      const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=7.2083&longitude=79.8358&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FColombo');
+      const x = await r.json();
+      const c = x.current;
+      const code = c.weather_code;
+
+      temp.textContent = Math.round(c.temperature_2m) + '°C';
+
+      const names = {
+        0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Rime fog',
+        51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',
+        71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',
+        82:'Heavy rain showers',95:'Thunderstorm',96:'Thunderstorm + hail',99:'Thunderstorm + hail'
+      };
+      desc.textContent = (names[code] || 'Current conditions') + ' · Humidity ' + Math.round(c.relative_humidity_2m) + '%';
+
+      const rain = [51,53,55,61,63,65,80,81,82].includes(code);
+      const storm = [95,96,99].includes(code);
+      const foggy = [45,48].includes(code);
+      const clear = code === 0;
+
+      let iconName = 'fa-cloud-sun';
+      if (storm) iconName = 'fa-cloud-bolt';
+      else if (rain) iconName = 'fa-cloud-showers-heavy';
+      else if (foggy) iconName = 'fa-smog';
+      else if (clear) iconName = 'fa-sun';
+      icon.className = 'fas ' + iconName + ' weather-icon';
+
+      applyWeather(code);
+    } catch (e) {
+      temp.textContent = 'Unavailable';
+      desc.textContent = 'Weather service unavailable';
+    }
+  }
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  loadTodos();
+  render();
+
+  if (localStorage.getItem('chinaHolidayCalendar') === '1') {
+    setChinaCalendar(true);
+    requestAnimationFrame(() => positionPanel(chinaPanel));
+  }
+
+  weather();
+  setInterval(weather, 15 * 60 * 1000);
+})();
+</script>
 
 <script>
 (() => {
     const updateVisibility = () => {
         document.body.classList.toggle('page-hidden', document.hidden);
     };
-    document.addEventListener('visibilitychange', updateVisibility, {passive: true});
+    document.addEventListener('visibilitychange', updateVisibility, { passive: true });
     updateVisibility();
 })();
 </script>
